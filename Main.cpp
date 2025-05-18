@@ -72,12 +72,28 @@ public:
                  << " (" << robot.getX() << "," << robot.getY() << ")" << endl;
         }
     }
+
+    void fireAt(int x, int y){
+        bool hit=false;
+        for (auto it=robots.begin(); it !=robots.end(); ++it){
+            if (it->getX() == x && it->getY() == y){
+                cout<<"Robot hit"<< it->getName() << "at("<< x << ","<< y <<")!" << endl;
+                robots.erase(it);
+                hit = (true);
+                break;
+            }
+        }
+         if (!hit){
+            cout << "No robot at ("<< x << "," << y <<")." << endl;
+         }
+        }
 };
 
 void showMainMenu() {
     cout << "\n=== ROBOT WAR SIMULATOR ===" << endl;
     cout << "1. Start simulation" << endl;
-    cout << "2. Exit" << endl;
+    cout << "2. Fire at location" << endl;
+    cout << "3. Exit" << endl;
     cout << "Enter your choice: ";
 }
 
@@ -97,7 +113,16 @@ int main() {
                 cin.ignore();
                 cin.get();
                 break;
-            case 2:
+            case 2:{
+                int fireX,fireY;
+                cout << "\nEnter X coordinate to fire (0-" << 39 <<"):";
+                cin >>fireX;
+                cout << "\nEnter y coordinate to fire (0-" << 19 <<"):";
+                cin >>fireY;
+                battlefield.fireAt(fireX,fireY);
+                break;
+            }
+            case 3:
                 cout << "Exiting..." << endl;
                 break;
             default:
