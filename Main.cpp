@@ -21,17 +21,14 @@ public:
     }
     virtual ~Robot() = default;
 
-    // Pure virtual functions (must be implemented by derived classes)
     virtual void move(int dx, int dy) = 0;
     virtual void fire(int targetX, int targetY) = 0;
 
-    // Getters
     string getName() const { return name; }
     int getX() const { return positionX; }
     int getY() const { return positionY; }
     char getSymbol() const { return symbol; }
 
-    // Operator overloading
     bool operator==(const Robot& other) const {
         return positionX == other.positionX && positionY == other.positionY;
     }
@@ -43,7 +40,7 @@ public:
     }
 };
 
-// Derived robot class
+// Derived class
 class GenericRobot : public Robot {
 private:
     int shells = 10;
@@ -76,7 +73,6 @@ private:
 
 public:
     Battlefield() {
-        // Initialize robots with your custom names
         robots.push_back(make_unique<GenericRobot>("Thaqif", 5, 4));
         robots.push_back(make_unique<GenericRobot>("Marcuz", 16, 2));
         robots.push_back(make_unique<GenericRobot>("Rara", 3, 7));
@@ -84,7 +80,6 @@ public:
     }
 
     void display() const {
-        // Display X-axis coordinates
         cout << "    ";
         for (int x = 0; x < width; x++) {
             cout << setw(2) << x;
@@ -93,7 +88,6 @@ public:
         for (int x = 0; x < width; x++) cout << "--";
         cout << "+\n";
 
-        // Display grid with Y-axis coordinates
         for (int y = 0; y < height; y++) {
             cout << setw(2) << y << " |";
             for (int x = 0; x < width; x++) {
@@ -110,16 +104,29 @@ public:
             cout << " |\n";
         }
 
-        // Bottom border
         cout << "   +";
         for (int x = 0; x < width; x++) cout << "--";
         cout << "+\n";
 
-        // Robot status using overloaded << operator
         cout << "\nRobot Status:\n";
         for (const auto& robot : robots) {
             cout << *robot << "\n";
         }
+    }
+
+    void checkAndHitRobot(int x, int y, Robot* shooter) {
+        for (auto it = robots.begin(); it != robots.end(); ++it) {
+            if ((*it)->getX() == x && (*it)->getY() == y) {
+                if (shooter == it->get()) {//this code is to show that we are shooting ourselves
+                    cout << "You can't shoot yourself!\n";
+                    return;
+                }
+                cout << "Target hit! " << (*it)->getName() << " was destroyed!\n";
+                robots.erase(it);//delete the robot that is being shoot need to be update later since only 70% chance should hit
+                return;
+            }
+        }
+        cout << "Missed! No robot at (" << x << "," << y << ").\n";
     }
 
     void commandLoop() {
@@ -132,24 +139,25 @@ public:
             if (command == "quit") {
                 cout << "Returning to main menu...\n";
                 break;
-            }
-            else if (command == "help") {
+            } else if (command == "help") {
                 cout << "Commands:\n"
-                     << "move [direction] - Move robot (e.g. 'move up')\n"
-                     << "fire [x] [y]    - Fire at coordinates\n"
-                     << "quit             - Exit to menu\n";
+                     << "move [direction]      - Move robot (e.g. 'move up')\n"
+                     << "fire [x] [y]          - Fire at coordinates\n"
+                     << "quit                  - Exit to menu\n";
+            } else if (command.find("move") == 0) {
+                // Example: always moves first robot down by 1
+                robots[0]->move(0, 1);
+            } else if (command.find("fire") == 0) {//this code will find the word fire %d show the location number of it
+                int tx, ty;
+                if (sscanf(command.c_str(), "fire %d %d", &tx, &ty) == 2) {
+                    robots[0]->fire(tx, ty);
+                    checkAndHitRobot(tx, ty, robots[0].get());
+                } else {
+                    cout << "Invalid fire command! Type 'help' for options.\n";
+                }
             }
-            else if (command.find("move") == 0) {
-                // Polymorphic call to move()
-                robots[0]->move(0, 1); // Example: move down
-            }
-            else if (command.find("fire") == 0) {
-                // Polymorphic call to fire()
-                robots[0]->fire(5, 5); // Example target
-            }
-            else {
-                cout << "Unknown command. Type 'help' for options.\n";
-            }
+
+            display();  // Update battlefield after each command
         }
     }
 };
@@ -157,7 +165,7 @@ public:
 void showMainMenu() {
     cout << "\n=== ROBOT WAR SIMULATOR ===\n"
          << "1. Start simulation\n"
-         << "2. Commands and Guide (kot)\n"
+         << "2. Commands and Guide\n"
          << "3. Exit\n"
          << "Enter your choice: ";
 }
@@ -179,8 +187,8 @@ int main() {
                 break;
             case 2:
                 cout << "Command Guide:\n"
-                     << "move - Change robot position\n"
-                     << "fire - Attack other robots\n";
+                     << "move [direction] - Change robot position\n"
+                     << "fire [x] [y]     - Attack a location\n";
                 break;
             case 3:
                 cout << "Exiting...\n";
