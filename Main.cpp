@@ -1,11 +1,15 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <algorithm>
+#include <iomanip>
+#include <memory>
 
 using namespace std;
 
+// Abstract base class
 class Robot {
-private:
+protected:
     string name;
     int positionX;
     int positionY;
@@ -15,61 +19,137 @@ public:
     Robot(string name, int x, int y) : name(name), positionX(x), positionY(y) {
         symbol = name.empty() ? 'R' : toupper(name[0]);
     }
+    virtual ~Robot() = default;
 
+    // Pure virtual functions (must be implemented by derived classes)
+    virtual void move(int dx, int dy) = 0;
+    virtual void fire(int targetX, int targetY) = 0;
+
+    // Getters
     string getName() const { return name; }
     int getX() const { return positionX; }
     int getY() const { return positionY; }
     char getSymbol() const { return symbol; }
+
+    // Operator overloading
+    bool operator==(const Robot& other) const {
+        return positionX == other.positionX && positionY == other.positionY;
+    }
+
+    friend ostream& operator<<(ostream& os, const Robot& robot) {
+        os << robot.name << " (" << robot.symbol << ") at ["
+           << robot.positionX << "," << robot.positionY << "]";
+        return os;
+    }
+};
+
+// Derived robot class
+class GenericRobot : public Robot {
+private:
+    int shells = 10;
+
+public:
+    GenericRobot(string name, int x, int y) : Robot(name, x, y) {}
+
+    void move(int dx, int dy) override {
+        positionX += dx;
+        positionY += dy;
+        cout << name << " moved to (" << positionX << "," << positionY << ")\n";
+    }
+
+    void fire(int targetX, int targetY) override {
+        if (shells <= 0) {
+            cout << name << " is out of ammo!\n";
+            return;
+        }
+        shells--;
+        cout << name << " fires at (" << targetX << "," << targetY
+             << "). Shells left: " << shells << "\n";
+    }
 };
 
 class Battlefield {
 private:
-    int width = 40;  // Default preset width
-    int height = 20; // Default preset height
-    vector<Robot> robots;
+    int width = 20;
+    int height = 10;
+    vector<unique_ptr<Robot>> robots;
 
 public:
     Battlefield() {
-        // Add preset robots
-        robots.emplace_back("Alpha", 5, 5);
-        robots.emplace_back("Bravo", 35, 5);
-        robots.emplace_back("Charlie", 5, 15);
-        robots.emplace_back("Delta", 35, 15);
+        // Initialize robots with your custom names
+        robots.push_back(make_unique<GenericRobot>("Thaqif", 5, 4));
+        robots.push_back(make_unique<GenericRobot>("Marcuz", 16, 2));
+        robots.push_back(make_unique<GenericRobot>("Rara", 3, 7));
+        robots.push_back(make_unique<GenericRobot>("Ieman", 16, 7));
     }
 
     void display() const {
-        // Display top border
-        cout << "+";
-        for (int x = 0; x < width; x++) cout << "-";
-        cout << "+" << endl;
+        // Display X-axis coordinates
+        cout << "    ";
+        for (int x = 0; x < width; x++) {
+            cout << setw(2) << x;
+        }
+        cout << "\n   +";
+        for (int x = 0; x < width; x++) cout << "--";
+        cout << "+\n";
 
-        // Display battlefield with robots
+        // Display grid with Y-axis coordinates
         for (int y = 0; y < height; y++) {
-            cout << "|"; // Left border
+            cout << setw(2) << y << " |";
             for (int x = 0; x < width; x++) {
                 bool robotHere = false;
                 for (const auto& robot : robots) {
-                    if (robot.getX() == x && robot.getY() == y) {
-                        cout << robot.getSymbol();
+                    if (robot->getX() == x && robot->getY() == y) {
+                        cout << " " << robot->getSymbol();
                         robotHere = true;
                         break;
                     }
                 }
-                if (!robotHere) cout << " ";
+                cout << (robotHere ? "" : " .");
             }
-            cout << "|" << endl; // Right border
+            cout << " |\n";
         }
 
-        // Display bottom border
-        cout << "+";
-        for (int x = 0; x < width; x++) cout << "-";
-        cout << "+" << endl;
+        // Bottom border
+        cout << "   +";
+        for (int x = 0; x < width; x++) cout << "--";
+        cout << "+\n";
 
-        // Display robot legend
-        cout << "\nRobot Legend:" << endl;
+        // Robot status using overloaded << operator
+        cout << "\nRobot Status:\n";
         for (const auto& robot : robots) {
-            cout << robot.getSymbol() << ": " << robot.getName()
-                 << " (" << robot.getX() << "," << robot.getY() << ")" << endl;
+            cout << *robot << "\n";
+        }
+    }
+
+    void commandLoop() {
+        string command;
+        while (true) {
+            cout << "\nEnter command (help/quit/move/fire): ";
+            getline(cin, command);
+            transform(command.begin(), command.end(), command.begin(), ::tolower);
+
+            if (command == "quit") {
+                cout << "Returning to main menu...\n";
+                break;
+            }
+            else if (command == "help") {
+                cout << "Commands:\n"
+                     << "move [direction] - Move robot (e.g. 'move up')\n"
+                     << "fire [x] [y]    - Fire at coordinates\n"
+                     << "quit             - Exit to menu\n";
+            }
+            else if (command.find("move") == 0) {
+                // Polymorphic call to move()
+                robots[0]->move(0, 1); // Example: move down
+            }
+            else if (command.find("fire") == 0) {
+                // Polymorphic call to fire()
+                robots[0]->fire(5, 5); // Example target
+            }
+            else {
+                cout << "Unknown command. Type 'help' for options.\n";
+            }
         }
     }
 
@@ -90,29 +170,37 @@ public:
 };
 
 void showMainMenu() {
+<<<<<<< HEAD
     cout << "\n=== ROBOT WAR SIMULATOR ===" << endl;
     cout << "1. Start simulation" << endl;
     cout << "2. Fire at location" << endl;
     cout << "3. Exit" << endl;
     cout << "Enter your choice: ";
+=======
+    cout << "\n=== ROBOT WAR SIMULATOR ===\n"
+         << "1. Start simulation\n"
+         << "2. Commands and Guide (kot)\n"
+         << "3. Exit\n"
+         << "Enter your choice: ";
+>>>>>>> main
 }
 
 int main() {
-    Battlefield battlefield; // Create preset battlefield with robots
+    Battlefield battlefield;
     int choice;
 
     do {
         showMainMenu();
         cin >> choice;
+        cin.ignore();
 
         switch (choice) {
             case 1:
-                cout << "\nStarting simulation with preset battlefield and robots...\n";
+                cout << "\nStarting simulation...\n";
                 battlefield.display();
-                cout << "\nSimulation running... (Press any key to return to menu)";
-                cin.ignore();
-                cin.get();
+                battlefield.commandLoop();
                 break;
+<<<<<<< HEAD
             case 2:{
                 int fireX,fireY;
                 cout << "\nEnter X coordinate to fire (0-" << 39 <<"):";
@@ -124,11 +212,20 @@ int main() {
             }
             case 3:
                 cout << "Exiting..." << endl;
+=======
+            case 2:
+                cout << "Command Guide:\n"
+                     << "move - Change robot position\n"
+                     << "fire - Attack other robots\n";
+                break;
+            case 3:
+                cout << "Exiting...\n";
+>>>>>>> main
                 break;
             default:
-                cout << "Invalid choice! Try again." << endl;
+                cout << "Invalid choice!\n";
         }
-    } while (choice != 2);
+    } while (choice != 3);
 
     return 0;
 }
