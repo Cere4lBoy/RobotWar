@@ -152,37 +152,14 @@ public:
             }
         }
     }
-
-    void fireAt(int x, int y){
-        bool hit=false;
-        for (auto it=robots.begin(); it !=robots.end(); ++it){
-            if (it->getX() == x && it->getY() == y){
-                cout<<"Robot hit"<< it->getName() << "at("<< x << ","<< y <<")!" << endl;
-                robots.erase(it);
-                hit = (true);
-                break;
-            }
-        }
-         if (!hit){
-            cout << "No robot at ("<< x << "," << y <<")." << endl;
-         }
-        }
 };
 
 void showMainMenu() {
-<<<<<<< HEAD
-    cout << "\n=== ROBOT WAR SIMULATOR ===" << endl;
-    cout << "1. Start simulation" << endl;
-    cout << "2. Fire at location" << endl;
-    cout << "3. Exit" << endl;
-    cout << "Enter your choice: ";
-=======
     cout << "\n=== ROBOT WAR SIMULATOR ===\n"
          << "1. Start simulation\n"
          << "2. Commands and Guide (kot)\n"
          << "3. Exit\n"
          << "Enter your choice: ";
->>>>>>> main
 }
 
 int main() {
@@ -200,19 +177,6 @@ int main() {
                 battlefield.display();
                 battlefield.commandLoop();
                 break;
-<<<<<<< HEAD
-            case 2:{
-                int fireX,fireY;
-                cout << "\nEnter X coordinate to fire (0-" << 39 <<"):";
-                cin >>fireX;
-                cout << "\nEnter y coordinate to fire (0-" << 19 <<"):";
-                cin >>fireY;
-                battlefield.fireAt(fireX,fireY);
-                break;
-            }
-            case 3:
-                cout << "Exiting..." << endl;
-=======
             case 2:
                 cout << "Command Guide:\n"
                      << "move - Change robot position\n"
@@ -220,7 +184,6 @@ int main() {
                 break;
             case 3:
                 cout << "Exiting...\n";
->>>>>>> main
                 break;
             default:
                 cout << "Invalid choice!\n";
