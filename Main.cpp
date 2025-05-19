@@ -23,6 +23,7 @@ public:
 
     virtual void move(int dx, int dy) = 0;
     virtual void fire(int targetX, int targetY) = 0;
+    virtual void look(int originalX, int originalY) = 0;
 
     string getName() const { return name; }
     int getX() const { return positionX; }
@@ -62,7 +63,12 @@ public:
         shells--;
         cout << name << " fires at (" << targetX << "," << targetY
              << "). Shells left: " << shells << "\n";
+
     }
+    void look(int x, int y) override {
+        cout << name << " is looking at (" << x << "," << y << "):\n";
+        }
+
 };
 
 class Battlefield {
@@ -129,10 +135,36 @@ public:
         cout << "Missed! No robot at (" << x << "," << y << ").\n";
     }
 
+    void lookarea(int x, int y, int originalX, int originalY) const {
+        int targetX = originalX + 2;
+        int targetY = originalY +  2;
+
+        // Check if the coordinate given is exceed the map
+        if (x < 0 || x >= width || y < 0 || y >= height) {
+            cout << "There is a Wall at (" << x << "," << y << ")\n";
+            return;
+        }
+
+        if (x > targetX || y > targetY) {
+            cout << "Can't look at (" << x << "," << y << ") since it is outside of your 3x3 area.\n";
+            return;
+        }
+
+        // Check if any robot is at the target position
+        for (const auto& robot : robots) {
+            if (robot->getX() == x && robot->getY() == y) {
+                cout << "There is an Enemy (" << robot->getSymbol() << ") at (" << x << "," << y << ")\n";
+                return;
+            }
+        }
+
+        cout << "Nothing at (" << x << "," << y << ")\n";
+    }
+
     void commandLoop() {
         string command;
         while (true) {
-            cout << "\nEnter command (help/quit/move/fire): ";
+            cout << "\nEnter command (help/quit/move/fire/look): ";
             getline(cin, command);
             transform(command.begin(), command.end(), command.begin(), ::tolower);
 
@@ -143,6 +175,7 @@ public:
                 cout << "Commands:\n"
                      << "move [direction]      - Move robot (e.g. 'move up')\n"
                      << "fire [x] [y]          - Fire at coordinates\n"
+                     << "look [x] [y]          - Check area 3x3\n"
                      << "quit                  - Exit to menu\n";
             } else if (command.find("move") == 0) {
                 // Example: always moves first robot down by 1
@@ -152,7 +185,15 @@ public:
                 if (sscanf(command.c_str(), "fire %d %d", &tx, &ty) == 2) {
                     robots[0]->fire(tx, ty);
                     checkAndHitRobot(tx, ty, robots[0].get());
-                } else {
+                 }
+                 } else if (command.find("look") == 0 ) {
+                int tx, ty;
+                if (sscanf(command.c_str(), "look %d %d", &tx, &ty) == 2) {
+                    robots[0]->look(tx, ty);
+                    lookarea(tx, ty, robots[0]->getX(), robots[0]->getY());
+                    }
+
+                else {
                     cout << "Invalid fire command! Type 'help' for options.\n";
                 }
             }
@@ -188,7 +229,8 @@ int main() {
             case 2:
                 cout << "Command Guide:\n"
                      << "move [direction] - Change robot position\n"
-                     << "fire [x] [y]     - Attack a location\n";
+                     << "fire [x] [y]     - Attack a location\n"
+                     << "look [x] [y]     - Check area 3x3\n";
                 break;
             case 3:
                 cout << "Exiting...\n";
