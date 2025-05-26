@@ -24,6 +24,7 @@ public:
     virtual void move(int dx, int dy) = 0;
     virtual void fire(int targetX, int targetY) = 0;
     virtual void look(int originalX, int originalY) = 0;
+    virtual void think() = 0;
 
     string getName() const { return name; }
     int getX() const { return positionX; }
@@ -67,6 +68,23 @@ public:
     }
     void look(int x, int y) override {
         cout << name << " is looking at (" << x << "," << y << "):\n";
+        }
+
+    void think()override{
+        if (name == "Thaqif") return;  //skip thaqif thinking sbb kite control
+
+        cout << name << " is thinking...\n";
+
+        int dx = (rand() % 3)-1;
+        int dy = (rand() % 3)-1;
+
+        //either nak fire or moving
+        if (rand() % 2 == 0){
+            look (dx,dy);
+            fire(positionX + dx,positionY + dy);
+        }else {
+            move(dx, dy);
+            }
         }
 
 };
@@ -135,9 +153,8 @@ public:
         cout << "Missed! No robot at (" << x << "," << y << ").\n";
     }
 
-    void lookarea(int x, int y, int originalX, int originalY) const {
-        int targetX = originalX + 2;
-        int targetY = originalY +  2;
+    void lookarea(int x, int y, int targetX, int targetY) const {
+
 
         // Check if the coordinate given is exceed the map
         if (x < 0 || x >= width || y < 0 || y >= height) {
@@ -145,8 +162,13 @@ public:
             return;
         }
 
-        if (x > targetX || y > targetY) {
+        if (x > targetX + 1 || y > targetY + 1 || x < targetX - 1 || y < targetY -1 ) {
             cout << "Can't look at (" << x << "," << y << ") since it is outside of your 3x3 area.\n";
+            return;
+        }
+
+        if (x == targetX || y == targetY){
+            cout << "You are looking at yourself which is (" << x << "," << y <<").\n";
             return;
         }
 
@@ -196,9 +218,13 @@ public:
                 else {
                     cout << "Invalid fire command! Type 'help' for options.\n";
                 }
-            }
 
-            display();  // Update battlefield after each command
+            }
+            for (size_t i = 1; i < robots.size(); ++i){
+                    robots[i]->think();
+                }
+                display();  // Update battlefield after each command
+
         }
     }
 };
@@ -212,6 +238,8 @@ void showMainMenu() {
 }
 
 int main() {
+    srand(static_cast<unsigned>(time(0)));
+
     Battlefield battlefield;
     int choice;
 
