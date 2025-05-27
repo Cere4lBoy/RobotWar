@@ -1,0 +1,6 @@
+M by N : 10 10
+steps: 15
+GenericRobot Thaqif 1 1
+GenericRobot Rara 8 8
+GenericRobot Ieman random random
+GenericRobot Marcuz 3 3

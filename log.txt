@@ -1,0 +1,45 @@
+Simulation started.
+Steps: 15
+--- Step 1 ---
+--- Step 2 ---
+Rara is thinking...
+Rara is looking at (9,9)
+Rara fires at (9,9). Shells left: 9
+--- Step 3 ---
+Ieman is thinking...
+Ieman moved from (3,5) to (2,6)
+--- Step 4 ---
+Marcuz is thinking...
+Marcuz is looking at (4,3)
+Marcuz fires at (4,3). Shells left: 9
+--- Step 5 ---
+--- Step 6 ---
+Rara is thinking...
+Rara moved from (8,8) to (8,9)
+--- Step 7 ---
+Ieman is thinking...
+Ieman is looking at (2,7)
+Ieman fires at (2,7). Shells left: 9
+--- Step 8 ---
+Marcuz is thinking...
+Marcuz moved from (3,3) to (3,2)
+--- Step 9 ---
+--- Step 10 ---
+Rara is thinking...
+Rara moved from (8,9) to (9,9)
+--- Step 11 ---
+Ieman is thinking...
+Ieman moved from (2,6) to (3,5)
+--- Step 12 ---
+Marcuz is thinking...
+Marcuz moved from (3,2) to (4,1)
+--- Step 13 ---
+--- Step 14 ---
+Rara is thinking...
+Rara is looking at (10,10)
+Rara fires at (10,10). Shells left: 8
+--- Step 15 ---
+Ieman is thinking...
+Ieman is looking at (4,6)
+Ieman fires at (4,6). Shells left: 8
+Simulation ended.
