@@ -6,8 +6,8 @@ STUDENT 1:
     Name: Iman Thaqif
     ID: 242UC245G9
 STUDENT 2:
-    Name:
-    ID:
+    Name:MOHAMMAD IEMAN BIN ZAHARI
+    ID: 242UC244SN
 STUDENT 3:
     Name:
     ID:
@@ -140,7 +140,6 @@ public:
     }
 
     void think(Logger* logger) override {
-        if (name == "Thaqif") return;
         if (logger) logger->log(name + " is thinking...");
 
         int dx = (rand() % 3) - 1;
