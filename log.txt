@@ -1,6 +1,8 @@
 Simulation started.
 Steps: 15
 --- Step 1 ---
+Thaqif is thinking...
+Thaqif moved from (1,1) to (2,2)
 --- Step 2 ---
 Rara is thinking...
 Rara moved from (8,8) to (7,7)
@@ -34,11 +36,20 @@ Ieman fires at (11,6). Shells left: 9
 Marcuz is thinking...
 Marcuz moved from (3,3) to (2,3)
 --- Step 13 ---
+Thaqif is thinking...
+Thaqif moved from (4,4) to (3,5)
 --- Step 14 ---
 Rara is thinking...
+<<<<<<< HEAD
 Rara moved from (7,7) to (6,7)
 --- Step 15 ---
 Ieman is thinking...
 Ieman is looking at (10,8)
 Ieman fires at (10,8). Shells left: 8
+=======
+Rara moved from (9,8) to (8,9)
+--- Step 15 ---
+Ieman is thinking...
+Ieman moved from (7,3) to (7,2)
+>>>>>>> 37480bce1a3b794d18566dcc4843a44562d0683c
 Simulation ended.
