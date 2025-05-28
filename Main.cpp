@@ -8,8 +8,8 @@ STUDENT 1:
 STUDENT 2:
     Name:MOHAMMAD IEMAN BIN ZAHARI
     ID: 242UC244SN
-STUDENT 3:
-    Name:
+STUDENT 3:AMIRA RAHEEMA BINTI MOHAMAD KAMAROL
+    Name: 242UC244MB
     ID:
 STUDENT 4:
     Name:
@@ -147,6 +147,7 @@ public:
 
         if (rand() % 2 == 0) {
             look(positionX + dx, positionY + dy, logger);
+        } else if (rand() % 2 == 1) {
             fire(positionX + dx, positionY + dy, logger);
         } else {
             move(dx, dy, logger);
