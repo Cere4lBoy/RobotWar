@@ -6,11 +6,11 @@ STUDENT 1:
     Name: Iman Thaqif
     ID: 242UC245G9
 STUDENT 2:
-    Name:MOHAMMAD IEMAN BIN ZAHARI
+    Name: MOHAMMAD IEMAN BIN ZAHARI
     ID: 242UC244SN
-STUDENT 3:AMIRA RAHEEMA BINTI MOHAMAD KAMAROL
-    Name: 242UC244MB
-    ID:
+STUDENT 3:
+    Name: AMIRA RAHEEMA BINTI MOHAMAD KAMAROL
+    ID: 242UC244MB
 STUDENT 4:
     Name:
     ID:
@@ -121,7 +121,7 @@ public:
     int getX() const { return positionX; }
     int getY() const { return positionY; }
     int getLives() const { return lives; }
-    void setLives(int l) { lives = l; } //-- setter
+    void setLives(int l) { lives = 3; } //-- setter
     void loseLife() { if (lives>0) --lives; }
     char getSymbol() const { return symbol; }
 
@@ -253,6 +253,13 @@ public:
         int tx = positionX + dx;
         int ty = positionY + dy;
 
+         //avoid robot suicide
+        if (dx == 0 && dy == 0){
+            if(logger) logger->log(name + " Skipped firing to avoid shooting itself.");
+            cout << name << "Skipped firing to avoid shooting itself." << endl;
+            return;
+        }
+
         // Use ScoutBot
         if (hasScout && scoutCount > 0 && (rand() % 10 == 0)) {
             scoutCount--;
@@ -268,6 +275,7 @@ public:
             fire(positionX + dx, positionY + dy, logger);
         } else {
             look(tx, ty, logger);
+        }
         }
 
         //normal move
@@ -308,14 +316,17 @@ public:
                 battlefield->checkAndHitRobot(tx, ty, this);
             }
         }
-    }
+
+
 
 
         // Normal move (if not used jump)
         /*if (rand() % 2 == 0) {
             move(dx, dy, maxWidth, maxHeight, logger);
-        }
-    }*/
+        }*/
+
+    }
+};
 
 void GenericRobot::applyUpgrade(const string& upgradeName) {
     if (chosenUpgrades.size() >= 3) {
@@ -437,8 +448,13 @@ void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
         if ((*it)->getX() == x && (*it)->getY() == y) {
             if (shooter == it->get()) {
                 cout << "You can't shoot yourself!\n";
+                if (logger) logger->log(shooter->getName() + " attempted to shoot itself. Ignored.");
                 return;
             }
+
+        int chance = rand()% 100;
+        if (chance < 70){
+            cout << "Target hit! " << (*it)->getName() << " !\n";
 
             Robot* target = it->get();
             target->loseLife();
@@ -460,6 +476,9 @@ void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
             }
 
             robots.erase(it);
+        }else{
+            cout << "Shot fired at"<< (*it)->getName() << " but missed\n";
+            }
             return;
         }
     }
@@ -518,10 +537,12 @@ int main() {
     for (int step = 0; step < battlefield.getSteps(); ++step) {
         logger.log("--- Step " + to_string(step + 1) + " ---");
         battlefield.runStep();
-        Sleep(10000);
+        Sleep(100);
     }
 
     logger.log("Simulation ended.");
     cout << "\nSimulation ended.\n";
     return 0;
+
 }
+
