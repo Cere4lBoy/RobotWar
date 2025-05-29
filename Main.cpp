@@ -1,3 +1,25 @@
+/**********|**********|**********|
+Program: main.cpp
+Course: Data Structures and Algorithms
+Trimester: 2410
+STUDENT 1:
+    Name: Iman Thaqif
+    ID: 242UC245G9
+STUDENT 2:
+    Name:MOHAMMAD IEMAN BIN ZAHARI
+    ID: 242UC244SN
+STUDENT 3:AMIRA RAHEEMA BINTI MOHAMAD KAMAROL
+    Name: 242UC244MB
+    ID:
+STUDENT 4:
+    Name:
+    ID:
+Lecture Section: TC
+Tutorial Section: TT1L
+Email: abc123@yourmail.com
+Phone: 018-1234567
+**********|**********|**********/
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -240,6 +262,10 @@ public:
             cout << ss.str() << endl;
             if (logger) logger->log(ss.str());
             // Optional: implement scan display logic here
+        if (rand() % 2 == 0) {
+            look(positionX + dx, positionY + dy, logger);
+        } else if (rand() % 2 == 1) {
+            fire(positionX + dx, positionY + dy, logger);
         } else {
             look(tx, ty, logger);
         }
