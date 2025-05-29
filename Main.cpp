@@ -121,7 +121,7 @@ public:
     int getX() const { return positionX; }
     int getY() const { return positionY; }
     int getLives() const { return lives; }
-    void setLives(int l) { lives = l; } //-- setter
+    void setLives(int l) { lives = 3; } //-- setter
     void loseLife() { if (lives>0) --lives; }
     char getSymbol() const { return symbol; }
 
@@ -448,13 +448,13 @@ void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
         if ((*it)->getX() == x && (*it)->getY() == y) {
             if (shooter == it->get()) {
                 cout << "You can't shoot yourself!\n";
+                if (logger) logger->log(shooter->getName() + " attempted to shoot itself. Ignored.");
                 return;
             }
-<<<<<<< HEAD
+
         int chance = rand()% 100;
         if (chance < 70){
-            cout << "Target hit! " << (*it)->getName() << " was destroyed!\n";
-=======
+            cout << "Target hit! " << (*it)->getName() << " !\n";
 
             Robot* target = it->get();
             target->loseLife();
@@ -462,7 +462,6 @@ void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
             if (target->getLives() > 0) {
                 return; //not destroy which still alive
             }
->>>>>>> main
             GenericRobot* gr = dynamic_cast<GenericRobot*>(shooter);
             if (gr) {
                 vector<string> upgrades;
