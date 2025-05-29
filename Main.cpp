@@ -87,9 +87,10 @@ protected:
     int positionX;
     int positionY;
     char symbol;
+    int lives;
 
 public:
-    Robot(string name, int x, int y) : name(name), positionX(x), positionY(y) {
+    Robot(string name, int x, int y) : name(name), positionX(x), positionY(y), lives(3) {
         symbol = name.empty() ? 'R' : toupper(name[0]);
     }
     virtual ~Robot() = default;
@@ -97,6 +98,9 @@ public:
     string getName() const { return name; }
     int getX() const { return positionX; }
     int getY() const { return positionY; }
+    int getLives() const { return lives; }
+    void setLives(int l) { lives = l; } //-- setter
+    void loseLife() { if (lives>0) --lives; }
     char getSymbol() const { return symbol; }
 
     bool operator==(const Robot& other) const {
@@ -275,9 +279,9 @@ public:
         }
 
         // Normal move (if not used jump)
-        if (rand() % 2 == 0) {
+        /*if (rand() % 2 == 0) {
             move(dx, dy, maxWidth, maxHeight, logger);
-        }
+        } --> ni bug yang which fire and move at the same time*/
     }
 };
 
@@ -404,7 +408,12 @@ void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
                 return;
             }
 
-            cout << "Target hit! " << (*it)->getName() << " was destroyed!\n";
+            Robot* target = it->get();
+            target->loseLife();
+            cout << "Target hit! " << (*it)->getName() << " lost a life. Lives left: " << target->getLives() << "\n";
+            if (target->getLives() > 0) {
+                return; //not destroy which still alive
+            }
             GenericRobot* gr = dynamic_cast<GenericRobot*>(shooter);
             if (gr) {
                 vector<string> upgrades;
@@ -477,7 +486,7 @@ int main() {
     for (int step = 0; step < battlefield.getSteps(); ++step) {
         logger.log("--- Step " + to_string(step + 1) + " ---");
         battlefield.runStep();
-        Sleep(100);
+        Sleep(500);
     }
 
     logger.log("Simulation ended.");
