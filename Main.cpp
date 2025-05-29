@@ -227,6 +227,13 @@ public:
         int tx = positionX + dx;
         int ty = positionY + dy;
 
+         //avoid robot suicide
+        if (dx == 0 && dy == 0){
+            if(logger) logger->log(name + " Skipped firing to avoid shooting itself.");
+            cout << name << "Skipped firing to avoid shooting itself." << endl;
+            return;
+        }
+
         // Use ScoutBot
         if (hasScout && scoutCount > 0 && (rand() % 10 == 0)) {
             scoutCount--;
@@ -403,7 +410,8 @@ void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
                 cout << "You can't shoot yourself!\n";
                 return;
             }
-
+        int chance = rand()% 100;
+        if (chance < 70){
             cout << "Target hit! " << (*it)->getName() << " was destroyed!\n";
             GenericRobot* gr = dynamic_cast<GenericRobot*>(shooter);
             if (gr) {
@@ -419,6 +427,9 @@ void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
             }
 
             robots.erase(it);
+        }else{
+            cout << "Shot fired at"<< (*it)->getName() << " but missed\n";
+            }
             return;
         }
     }
