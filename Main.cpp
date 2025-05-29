@@ -244,6 +244,11 @@ public:
             look(tx, ty, logger);
         }
 
+        //normal move
+        if (rand() % 2 == 0) {
+            move(dx, dy, maxWidth, maxHeight, logger);
+        }
+
         // FIRE logic with upgrade + hit check
         if (shells <= 0) {
             cout << name << " is out of ammo!\n";
@@ -277,13 +282,14 @@ public:
                 battlefield->checkAndHitRobot(tx, ty, this);
             }
         }
+    }
+
 
         // Normal move (if not used jump)
         /*if (rand() % 2 == 0) {
             move(dx, dy, maxWidth, maxHeight, logger);
-        } --> ni bug yang which fire and move at the same time*/
-    }
-};
+        }
+    }*/
 
 void GenericRobot::applyUpgrade(const string& upgradeName) {
     if (chosenUpgrades.size() >= 3) {
@@ -486,7 +492,7 @@ int main() {
     for (int step = 0; step < battlefield.getSteps(); ++step) {
         logger.log("--- Step " + to_string(step + 1) + " ---");
         battlefield.runStep();
-        Sleep(500);
+        Sleep(10000);
     }
 
     logger.log("Simulation ended.");
