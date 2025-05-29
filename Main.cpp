@@ -1,3 +1,25 @@
+/**********|**********|**********|
+Program: main.cpp
+Course: Data Structures and Algorithms
+Trimester: 2410
+STUDENT 1:
+    Name: Iman Thaqif
+    ID: 242UC245G9
+STUDENT 2:
+    Name:MOHAMMAD IEMAN BIN ZAHARI
+    ID: 242UC244SN
+STUDENT 3:AMIRA RAHEEMA BINTI MOHAMAD KAMAROL
+    Name: 242UC244MB
+    ID:
+STUDENT 4:
+    Name:
+    ID:
+Lecture Section: TC
+Tutorial Section: TT1L
+Email: abc123@yourmail.com
+Phone: 018-1234567
+**********|**********|**********/
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -87,9 +109,10 @@ protected:
     int positionX;
     int positionY;
     char symbol;
+    int lives;
 
 public:
-    Robot(string name, int x, int y) : name(name), positionX(x), positionY(y) {
+    Robot(string name, int x, int y) : name(name), positionX(x), positionY(y), lives(3) {
         symbol = name.empty() ? 'R' : toupper(name[0]);
     }
     virtual ~Robot() = default;
@@ -97,6 +120,9 @@ public:
     string getName() const { return name; }
     int getX() const { return positionX; }
     int getY() const { return positionY; }
+    int getLives() const { return lives; }
+    void setLives(int l) { lives = l; } //-- setter
+    void loseLife() { if (lives>0) --lives; }
     char getSymbol() const { return symbol; }
 
     bool operator==(const Robot& other) const {
@@ -243,8 +269,18 @@ public:
             cout << ss.str() << endl;
             if (logger) logger->log(ss.str());
             // Optional: implement scan display logic here
+        if (rand() % 2 == 0) {
+            look(positionX + dx, positionY + dy, logger);
+        } else if (rand() % 2 == 1) {
+            fire(positionX + dx, positionY + dy, logger);
         } else {
             look(tx, ty, logger);
+        }
+        }
+
+        //normal move
+        if (rand() % 2 == 0) {
+            move(dx, dy, maxWidth, maxHeight, logger);
         }
 
         // FIRE logic with upgrade + hit check
@@ -281,10 +317,14 @@ public:
             }
         }
 
+
+
+
         // Normal move (if not used jump)
-        if (rand() % 2 == 0) {
+        /*if (rand() % 2 == 0) {
             move(dx, dy, maxWidth, maxHeight, logger);
-        }
+        }*/
+
     }
 };
 
@@ -410,9 +450,19 @@ void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
                 cout << "You can't shoot yourself!\n";
                 return;
             }
+<<<<<<< HEAD
         int chance = rand()% 100;
         if (chance < 70){
             cout << "Target hit! " << (*it)->getName() << " was destroyed!\n";
+=======
+
+            Robot* target = it->get();
+            target->loseLife();
+            cout << "Target hit! " << (*it)->getName() << " lost a life. Lives left: " << target->getLives() << "\n";
+            if (target->getLives() > 0) {
+                return; //not destroy which still alive
+            }
+>>>>>>> main
             GenericRobot* gr = dynamic_cast<GenericRobot*>(shooter);
             if (gr) {
                 vector<string> upgrades;
@@ -494,4 +544,6 @@ int main() {
     logger.log("Simulation ended.");
     cout << "\nSimulation ended.\n";
     return 0;
+
 }
+
