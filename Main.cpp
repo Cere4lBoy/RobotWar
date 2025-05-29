@@ -269,6 +269,7 @@ public:
         } else {
             look(tx, ty, logger);
         }
+        }
 
         //normal move
         if (rand() % 2 == 0) {
@@ -308,14 +309,17 @@ public:
                 battlefield->checkAndHitRobot(tx, ty, this);
             }
         }
-    }
+
+
 
 
         // Normal move (if not used jump)
         /*if (rand() % 2 == 0) {
             move(dx, dy, maxWidth, maxHeight, logger);
-        }
-    }*/
+        }*/
+
+    }
+};
 
 void GenericRobot::applyUpgrade(const string& upgradeName) {
     if (chosenUpgrades.size() >= 3) {
@@ -518,10 +522,12 @@ int main() {
     for (int step = 0; step < battlefield.getSteps(); ++step) {
         logger.log("--- Step " + to_string(step + 1) + " ---");
         battlefield.runStep();
-        Sleep(10000);
+        Sleep(100);
     }
 
     logger.log("Simulation ended.");
     cout << "\nSimulation ended.\n";
     return 0;
+
 }
+

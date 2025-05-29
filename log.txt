@@ -2,57 +2,351 @@ Simulation started.
 Steps: 100
 --- Step 1 ---
 Thaqif is thinking...
-<<<<<<< HEAD
-Thaqif is looking at (8,4)
-Thaqif moved from (7,5) to (7,4)
+Thaqif moved from (4,3) to (4,4)
+Thaqif fires at (4,4). Shells left: 9
 --- Step 2 ---
 Rara is thinking...
-Rara is looking at (5,4)
-Rara fires at (5,4). Shells left: 9
-Rara moved from (5,5) to (5,4)
-=======
-Thaqif moved from (1,1) to (0,0)
---- Step 2 ---
-Rara is thinking...
-Rara is looking at (9,7)
+Rara moved from (5,5) to (4,4)
+Rara fires at (6,6). Shells left: 9
 --- Step 3 ---
 Ieman is thinking...
-Ieman is looking at (6,7)
+Ieman moved from (4,3) to (4,2)
+Ieman fires at (5,2). Shells left: 9
 --- Step 4 ---
 Marcuz is thinking...
-Marcuz is looking at (4,2)
+Marcuz fires at (2,2). Shells left: 9
 --- Step 5 ---
 Thaqif is thinking...
-Thaqif fires at (1,1). Shells left: 9
+Thaqif moved from (4,4) to (4,4)
+Thaqif fires at (5,4). Shells left: 8
 --- Step 6 ---
 Rara is thinking...
-Rara is looking at (7,9)
+Rara fires at (5,4). Shells left: 8
 --- Step 7 ---
 Ieman is thinking...
-Ieman is looking at (4,5)
+Ieman fires at (3,2). Shells left: 8
 --- Step 8 ---
 Marcuz is thinking...
-Marcuz moved from (3,3) to (4,3)
+Marcuz moved from (3,3) to (3,4)
+Marcuz fires at (3,4). Shells left: 8
 --- Step 9 ---
 Thaqif is thinking...
-Thaqif moved from (0,0) to (1,0)
+Thaqif moved from (4,4) to (4,4)
+Thaqif fires at (5,5). Shells left: 7
 --- Step 10 ---
 Rara is thinking...
-Rara is looking at (8,8)
+Rara fires at (3,5). Shells left: 7
 --- Step 11 ---
 Ieman is thinking...
-Ieman is looking at (4,7)
+Ieman moved from (4,2) to (3,3)
+Ieman fires at (3,3). Shells left: 7
 --- Step 12 ---
 Marcuz is thinking...
-Marcuz moved from (4,3) to (5,2)
+Marcuz moved from (3,4) to (4,4)
+Marcuz fires at (4,4). Shells left: 7
 --- Step 13 ---
 Thaqif is thinking...
-Thaqif moved from (1,0) to (0,0)
+Thaqif moved from (4,4) to (3,3)
+Thaqif fires at (3,3). Shells left: 6
 --- Step 14 ---
 Rara is thinking...
-Rara moved from (8,8) to (9,7)
+Rara fires at (3,3). Shells left: 6
 --- Step 15 ---
 Ieman is thinking...
-Ieman fires at (4,6). Shells left: 9
+Ieman fires at (4,2). Shells left: 6
+--- Step 16 ---
+Marcuz is thinking...
+Marcuz fires at (3,4). Shells left: 6
+--- Step 17 ---
+Thaqif is thinking...
+Thaqif fires at (4,2). Shells left: 5
+--- Step 18 ---
+Rara is thinking...
+Rara fires at (4,4). Shells left: 5
+--- Step 19 ---
+Ieman is thinking...
+Ieman fires at (3,3). Shells left: 5
+--- Step 20 ---
+Rara is thinking...
+Rara fires at (5,4). Shells left: 4
+--- Step 21 ---
+Ieman is thinking...
+Ieman fires at (4,3). Shells left: 29
+--- Step 22 ---
+Marcuz is thinking...
+Marcuz fires at (4,3). Shells left: 5
+--- Step 23 ---
+Rara is thinking...
+Rara fires at (4,4). Shells left: 3
+--- Step 24 ---
+Ieman is thinking...
+Ieman moved from (3,3) to (3,2)
+Ieman fires at (3,2). Shells left: 28
+--- Step 25 ---
+Marcuz is thinking...
+Marcuz moved from (4,4) to (4,4)
+Marcuz fires at (4,4). Shells left: 4
+--- Step 26 ---
+Rara is thinking...
+Rara fires at (5,5). Shells left: 2
+--- Step 27 ---
+Ieman is thinking...
+Ieman moved from (3,2) to (4,1)
+Ieman fires at (4,1). Shells left: 27
+--- Step 28 ---
+Marcuz is thinking...
+Marcuz fires at (3,3). Shells left: 3
+--- Step 29 ---
+Rara is thinking...
+Rara fires at (3,3). Shells left: 1
+--- Step 30 ---
+Ieman is thinking...
+Ieman moved from (4,1) to (4,1)
+Ieman fires at (4,1). Shells left: 26
+--- Step 31 ---
+Marcuz is thinking...
+Marcuz fires at (4,5). Shells left: 2
+--- Step 32 ---
+Rara is thinking...
+Rara fires at (3,5). Shells left: 0
+--- Step 33 ---
+Ieman is thinking...
+Ieman fires at (3,2). Shells left: 25
+--- Step 34 ---
+Marcuz is thinking...
+Marcuz moved from (4,4) to (4,4)
+Marcuz fires at (4,5). Shells left: 1
+--- Step 35 ---
+Rara is thinking...
+Rara moved from (4,4) to (3,3)
+Rara is out of ammo!
+--- Step 36 ---
+Ieman is thinking...
+Ieman fires at (3,2). Shells left: 24
+--- Step 37 ---
+Marcuz is thinking...
+Marcuz fires at (4,3). Shells left: 0
+--- Step 38 ---
+Rara is thinking...
+Rara is out of ammo!
+--- Step 39 ---
+Ieman is thinking...
+Ieman fires at (3,0). Shells left: 23
+--- Step 40 ---
+Marcuz is thinking...
+Marcuz is out of ammo!
+--- Step 41 ---
+Rara is thinking...
+Rara is out of ammo!
+--- Step 42 ---
+Ieman is thinking...
+Ieman fires at (3,0). Shells left: 22
+--- Step 43 ---
+Marcuz is thinking...
+Marcuz moved from (4,4) to (4,4)
+Marcuz is out of ammo!
+--- Step 44 ---
+Rara is thinking...
+Rara moved from (3,3) to (2,2)
+Rara is out of ammo!
+--- Step 45 ---
+Ieman is thinking...
+Ieman fires at (5,0). Shells left: 21
+--- Step 46 ---
+Marcuz is thinking...
+Marcuz moved from (4,4) to (4,4)
+Marcuz is out of ammo!
+--- Step 47 ---
+Rara is thinking...
+Rara is out of ammo!
+--- Step 48 ---
+Ieman is thinking...
+Ieman moved from (4,1) to (4,2)
+Ieman fires at (5,2). Shells left: 20
+--- Step 49 ---
+Marcuz is thinking...
+Marcuz is out of ammo!
+--- Step 50 ---
+Rara is thinking...
+Rara moved from (2,2) to (1,2)
+Rara is out of ammo!
+--- Step 51 ---
+Ieman is thinking...
+Ieman moved from (4,2) to (4,1)
+Ieman fires at (4,1). Shells left: 19
+--- Step 52 ---
+Marcuz is thinking...
+Marcuz moved from (4,4) to (3,4)
+Marcuz is out of ammo!
+--- Step 53 ---
+Rara is thinking...
+Rara moved from (1,2) to (2,3)
+Rara is out of ammo!
+--- Step 54 ---
+Ieman is thinking...
+Ieman fires at (5,1). Shells left: 18
+--- Step 55 ---
+Marcuz is thinking...
+Marcuz is out of ammo!
+--- Step 56 ---
+Rara is thinking...
+Rara is out of ammo!
+--- Step 57 ---
+Ieman is thinking...
+Ieman moved from (4,1) to (3,0)
+Ieman fires at (3,0). Shells left: 17
+--- Step 58 ---
+Marcuz is thinking...
+Marcuz moved from (3,4) to (4,4)
+Marcuz is out of ammo!
+--- Step 59 ---
+Rara is thinking...
+Rara moved from (2,3) to (1,3)
+Rara is out of ammo!
+--- Step 60 ---
+Ieman is thinking...
+Ieman fires at (4,1). Shells left: 16
+--- Step 61 ---
+Marcuz is thinking...
+Marcuz moved from (4,4) to (3,4)
+Marcuz is out of ammo!
+--- Step 62 ---
+Rara is thinking...
+Rara is out of ammo!
+--- Step 63 ---
+Ieman is thinking...
+Ieman moved from (3,0) to (2,1)
+Ieman fires at (2,1). Shells left: 15
+--- Step 64 ---
+Marcuz is thinking...
+Marcuz is out of ammo!
+--- Step 65 ---
+Rara is thinking...
+Rara moved from (1,3) to (0,2)
+Rara is out of ammo!
+--- Step 66 ---
+Ieman is thinking...
+Ieman moved from (2,1) to (2,1)
+Ieman fires at (2,1). Shells left: 14
+--- Step 67 ---
+Marcuz is thinking...
+Marcuz moved from (3,4) to (4,4)
+Marcuz is out of ammo!
+--- Step 68 ---
+Rara is thinking...
+Rara moved from (0,2) to (0,1)
+Rara is out of ammo!
+--- Step 69 ---
+Ieman is thinking...
+Ieman fires at (1,0). Shells left: 13
+--- Step 70 ---
+Marcuz is thinking...
+Marcuz is out of ammo!
+--- Step 71 ---
+Rara is thinking...
+Rara is out of ammo!
+--- Step 72 ---
+Ieman is thinking...
+Ieman moved from (2,1) to (3,1)
+Ieman fires at (3,1). Shells left: 12
+--- Step 73 ---
+Marcuz is thinking...
+Marcuz moved from (4,4) to (3,4)
+Marcuz is out of ammo!
+--- Step 74 ---
+Rara is thinking...
+Rara is out of ammo!
+--- Step 75 ---
+Ieman is thinking...
+Ieman fires at (4,0). Shells left: 11
+--- Step 76 ---
+Marcuz is thinking...
+Marcuz is out of ammo!
+--- Step 77 ---
+Rara is thinking...
+Rara moved from (0,1) to (0,1)
+Rara is out of ammo!
+--- Step 78 ---
+Ieman is thinking...
+Ieman moved from (3,1) to (4,1)
+Ieman fires at (4,1). Shells left: 10
+--- Step 79 ---
+Marcuz is thinking...
+Marcuz moved from (3,4) to (3,4)
+Marcuz is out of ammo!
+--- Step 80 ---
+Rara is thinking...
+Rara is out of ammo!
+--- Step 81 ---
+Ieman is thinking...
+Ieman fires at (5,1). Shells left: 9
+--- Step 82 ---
+Marcuz is thinking...
+Marcuz moved from (3,4) to (2,3)
+Marcuz is out of ammo!
+--- Step 83 ---
+Rara is thinking...
+Rara is out of ammo!
+--- Step 84 ---
+Ieman is thinking...
+Ieman fires at (5,0). Shells left: 8
+--- Step 85 ---
+Marcuz is thinking...
+Marcuz is out of ammo!
+--- Step 86 ---
+Rara is thinking...
+Rara moved from (0,1) to (0,1)
+Rara is out of ammo!
+--- Step 87 ---
+Ieman is thinking...
+Ieman moved from (4,1) to (4,0)
+Ieman fires at (4,0). Shells left: 7
+--- Step 88 ---
+Marcuz is thinking...
+Marcuz moved from (2,3) to (1,3)
+Marcuz is out of ammo!
+--- Step 89 ---
+Rara is thinking...
+Rara is out of ammo!
+--- Step 90 ---
+Ieman is thinking...
+Ieman moved from (4,0) to (3,0)
+Ieman fires at (3,-1). Shells left: 6
+--- Step 91 ---
+Marcuz is thinking...
+Marcuz moved from (1,3) to (0,2)
+Marcuz is out of ammo!
+--- Step 92 ---
+Rara is thinking...
+Rara moved from (0,1) to (0,0)
+Rara is out of ammo!
+--- Step 93 ---
+Ieman is thinking...
+Ieman fires at (3,0). Shells left: 5
+--- Step 94 ---
+Marcuz is thinking...
+Marcuz moved from (0,2) to (1,3)
+Marcuz is out of ammo!
+--- Step 95 ---
+Rara is thinking...
+Rara moved from (0,0) to (0,0)
+Rara is out of ammo!
+--- Step 96 ---
+Ieman is thinking...
+Ieman moved from (3,0) to (4,0)
+Ieman fires at (4,-1). Shells left: 4
+--- Step 97 ---
+Marcuz is thinking...
+Marcuz moved from (1,3) to (0,3)
+Marcuz is out of ammo!
+--- Step 98 ---
+Rara is thinking...
+Rara is out of ammo!
+--- Step 99 ---
+Ieman is thinking...
+Ieman moved from (4,0) to (4,0)
+Ieman fires at (4,0). Shells left: 3
+--- Step 100 ---
+Marcuz is thinking...
+Marcuz is out of ammo!
 Simulation ended.
->>>>>>> 51d121432e51bab1484f3c1a1438312033d39ea3
