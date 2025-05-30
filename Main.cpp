@@ -256,7 +256,7 @@ public:
          //avoid robot suicide
         if (dx == 0 && dy == 0){
             if(logger) logger->log(name + " Skipped firing to avoid shooting itself.");
-            cout << name << "Skipped firing to avoid shooting itself." << endl;
+            cout << name << " Skipped firing to avoid shooting itself." << endl;
             return;
         }
 
@@ -268,7 +268,7 @@ public:
             ss << name << " used ScoutBot to scan the entire battlefield.";
             cout << ss.str() << endl;
             if (logger) logger->log(ss.str());
-            // Optional: implement scan display logic here
+        // Optional: implement scan display logic here
         if (rand() % 2 == 0) {
             look(positionX + dx, positionY + dy, logger);
         } else if (rand() % 2 == 1) {
@@ -276,12 +276,7 @@ public:
         } else {
             look(tx, ty, logger);
         }
-        }
-
-        //normal move
-        if (rand() % 2 == 0) {
-            move(dx, dy, maxWidth, maxHeight, logger);
-        }
+    }
 
         // FIRE logic with upgrade + hit check
         if (shells <= 0) {
@@ -307,6 +302,7 @@ public:
                 cout << ss.str() << endl;
                 if (logger) logger->log(ss.str());
                 battlefield->checkAndHitRobot(lx, ly, this);
+                 
             } else {
                 shells--;
                 stringstream ss;
@@ -316,15 +312,11 @@ public:
                 battlefield->checkAndHitRobot(tx, ty, this);
             }
         }
-
-
-
-
-        // Normal move (if not used jump)
-        /*if (rand() % 2 == 0) {
+        
+        //normal move
+        if (rand() % 2 == 0) {
             move(dx, dy, maxWidth, maxHeight, logger);
-        }*/
-
+        }
     }
 };
 
@@ -400,8 +392,6 @@ void GenericRobot::applyUpgrade(const string& upgradeName) {
     }
 }
 
-
-
 bool Battlefield::loadConfig(const string& filename) {
     ifstream file(filename);
     if (!file.is_open()) return false;
@@ -411,8 +401,10 @@ bool Battlefield::loadConfig(const string& filename) {
         if (line.empty()) continue;
         if (line.find("M by N") != string::npos) {
             sscanf(line.c_str(), "M by N : %d %d", &width, &height);
+            cout << "M by N : " << width << " by " << height << endl;
         } else if (line.find("steps:") != string::npos) {
             sscanf(line.c_str(), "steps: %d", &steps);
+            cout << "Steps : " << steps << endl;
         } else if (line.find("GenericRobot") != string::npos) {
             string tag, name, xStr, yStr;
             istringstream iss(line);
@@ -421,6 +413,7 @@ bool Battlefield::loadConfig(const string& filename) {
             x = (xStr == "random") ? rand() % width : stoi(xStr);
             y = (yStr == "random") ? rand() % height : stoi(yStr);
             robots.push_back(make_unique<GenericRobot>(name, x, y));
+            cout << tag << " " << name << " " << xStr << " " << yStr << endl;
         }
     }
     return true;
@@ -455,10 +448,13 @@ void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
         int chance = rand()% 100;
         if (chance < 70){
             cout << "Target hit! " << (*it)->getName() << " !\n";
+            if (logger) logger->log("Target hit! " + (*it)->getName() + " !");
+
 
             Robot* target = it->get();
             target->loseLife();
             cout << "Target hit! " << (*it)->getName() << " lost a life. Lives left: " << target->getLives() << "\n";
+            if (logger) logger->log("Target hit! " + (*it)->getName() + " lost a life. Lives left: " + to_string(target->getLives()));
             if (target->getLives() > 0) {
                 return; //not destroy which still alive
             }
@@ -476,7 +472,7 @@ void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
             }
 
             robots.erase(it);
-        }else{
+        } else {
             cout << "Shot fired at"<< (*it)->getName() << " but missed\n";
             }
             return;
@@ -529,20 +525,23 @@ int main() {
         return 1;
     }
 
+    cout << "------------ RobotWar ---------------\n";
+    cout << "Enter any key to start the simulation?";
+    int a;
+    cin >> a;
     logger.log("Simulation started.");
     logger.log("Steps: " + to_string(battlefield.getSteps()));
+    
 
     battlefield.display();
 
     for (int step = 0; step < battlefield.getSteps(); ++step) {
         logger.log("--- Step " + to_string(step + 1) + " ---");
         battlefield.runStep();
-        Sleep(100);
+        Sleep(5000);
     }
 
     logger.log("Simulation ended.");
     cout << "\nSimulation ended.\n";
     return 0;
-
 }
-
