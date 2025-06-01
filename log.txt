@@ -1,0 +1,7 @@
+Simulation started.
+Steps: 100
+--- Step 1 ---
+Thaqif is thinking...
+Thaqif is looking at (4,3)
+Thaqif fires at (4,3). Shells left: 9
+Thaqif moved from (5,2) to (4,3)

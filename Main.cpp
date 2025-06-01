@@ -267,17 +267,15 @@ public:
             stringstream ss;
             ss << name << " used ScoutBot to scan the entire battlefield.";
             cout << ss.str() << endl;
-            if (logger) logger->log(ss.str());
+            if (logger) logger->log(ss.str()); 
+        }
         // Optional: implement scan display logic here
         if (rand() % 2 == 0) {
             look(positionX + dx, positionY + dy, logger);
-        } else if (rand() % 2 == 1) {
-            fire(positionX + dx, positionY + dy, logger);
         } else {
             look(tx, ty, logger);
         }
-    }
-
+    
         // FIRE logic with upgrade + hit check
         if (shells <= 0) {
             cout << name << " is out of ammo!\n";
