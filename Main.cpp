@@ -12,12 +12,10 @@ STUDENT 3:
     Name: AMIRA RAHEEMA BINTI MOHAMAD KAMAROL
     ID: 242UC244MB
 STUDENT 4:
-    Name:
+    Name: 
     ID:
 Lecture Section: TC
 Tutorial Section: TT1L
-Email: abc123@yourmail.com
-Phone: 018-1234567
 **********|**********|**********/
 
 #include <iostream>
@@ -59,8 +57,6 @@ public:
         }
     }
 };
-
-
 
 
 void clearScreen() {
@@ -152,10 +148,11 @@ public:
     }
 
     bool loadConfig(const string& filename);
-    void runStep();
+    bool runStep();
     void display() const;
     void checkAndHitRobot(int x, int y, Robot* shooter);
     int getSteps() const { return steps; }
+    void markSelfDestruct(Robot* robot);
 };
 
 class GenericRobot : public Robot, public MovingRobot, public ShootingRobot, public SeeingRobot, public ThinkingRobot {
@@ -185,9 +182,14 @@ public:
     bool isScout() const { return hasScout; }
     bool isTrackBot() const { return hasTrack; }
 
+    const set<UpgradeArea>& getChosenUpgrades() const {
+        return chosenUpgrades;
+    }
+
     GenericRobot(string name, int x, int y) : Robot(name, x, y) {}
 
-    void applyUpgrade(const string& upgradeName);
+    void applyUpgrade(const string& upgradeName, Logger* logger);
+
 
     void move(int dx, int dy, int maxWidth, int maxHeight, Logger* logger) override {
         int oldX = positionX, oldY = positionY;
@@ -234,7 +236,6 @@ public:
             ss << name << " used JumpBot ability to jump to (" << positionX << "," << positionY << ")";
             cout << ss.str() << endl;
             if (logger) logger->log(ss.str());
-            return;
         }
 
         // Use HideBot
@@ -267,7 +268,7 @@ public:
             stringstream ss;
             ss << name << " used ScoutBot to scan the entire battlefield.";
             cout << ss.str() << endl;
-            if (logger) logger->log(ss.str()); 
+            if (logger) logger->log(ss.str());
         }
         // Optional: implement scan display logic here
         if (rand() % 2 == 0) {
@@ -275,11 +276,13 @@ public:
         } else {
             look(tx, ty, logger);
         }
-    
+
         // FIRE logic with upgrade + hit check
         if (shells <= 0) {
-            cout << name << " is out of ammo!\n";
-            if (logger) logger->log(name + " is out of ammo!");
+            cout << name << " is out of ammo and will self-destruct!\n";
+            if (logger) logger->log(name + " is out of ammo and will self-destruct!");
+            battlefield->markSelfDestruct(this);
+            return; // stop turn early
         } else {
             if (hasSemiAuto) {
                 for (int i = 0; i < 3 && shells > 0; ++i) {
@@ -300,7 +303,7 @@ public:
                 cout << ss.str() << endl;
                 if (logger) logger->log(ss.str());
                 battlefield->checkAndHitRobot(lx, ly, this);
-                 
+
             } else {
                 shells--;
                 stringstream ss;
@@ -308,87 +311,128 @@ public:
                 cout << ss.str() << endl;
                 if (logger) logger->log(ss.str());
                 battlefield->checkAndHitRobot(tx, ty, this);
+                move(dx, dy, maxWidth, maxHeight, logger);
             }
         }
-        
-        //normal move
+
+/*         //normal move
         if (rand() % 2 == 0) {
             move(dx, dy, maxWidth, maxHeight, logger);
-        }
+        } */
     }
 };
 
-void GenericRobot::applyUpgrade(const string& upgradeName) {
-    if (chosenUpgrades.size() >= 3) {
-        cout << name << " cannot be upgraded anymore.\n";
-        return;
+    void GenericRobot::applyUpgrade(const string& upgradeName, Logger* logger) {
+        if (chosenUpgrades.size() >= 3) {
+            string msg = name + " cannot be upgraded anymore.";
+            cout << msg << endl;
+            if (logger) logger->log(msg);
+            return;
+        }
+
+        if (upgradeName == "HideBot") {
+            if (chosenUpgrades.count(UpgradeArea::MOVE)) {
+                string msg = name + " already chose a movement upgrade.";
+                cout << msg << endl;
+                if (logger) logger->log(msg);
+                return;
+            }
+            hasHide = true;
+            hideCount = 3;
+            chosenUpgrades.insert(UpgradeArea::MOVE);
+            string msg = name + " upgraded to HideBot!";
+            cout << msg << endl;
+            if (logger) logger->log(msg);
+
+        } else if (upgradeName == "JumpBot") {
+            if (chosenUpgrades.count(UpgradeArea::MOVE)) {
+                string msg = name + " already chose a movement upgrade.";
+                cout << msg << endl;
+                if (logger) logger->log(msg);
+                return;
+            }
+            hasJump = true;
+            jumpCount = 3;
+            chosenUpgrades.insert(UpgradeArea::MOVE);
+            string msg = name + " upgraded to JumpBot!";
+            cout << msg << endl;
+            if (logger) logger->log(msg);
+
+        } else if (upgradeName == "LongShotBot") {
+            if (chosenUpgrades.count(UpgradeArea::SHOOT)) {
+                string msg = name + " already chose a shooting upgrade.";
+                cout << msg << endl;
+                if (logger) logger->log(msg);
+                return;
+            }
+            hasLongShot = true;
+            chosenUpgrades.insert(UpgradeArea::SHOOT);
+            string msg = name + " upgraded to LongShotBot!";
+            cout << msg << endl;
+            if (logger) logger->log(msg);
+
+        } else if (upgradeName == "SemiAutoBot") {
+            if (chosenUpgrades.count(UpgradeArea::SHOOT)) {
+                string msg = name + " already chose a shooting upgrade.";
+                cout << msg << endl;
+                if (logger) logger->log(msg);
+                return;
+            }
+            hasSemiAuto = true;
+            chosenUpgrades.insert(UpgradeArea::SHOOT);
+            string msg = name + " upgraded to SemiAutoBot!";
+            cout << msg << endl;
+            if (logger) logger->log(msg);
+
+        } else if (upgradeName == "ThirtyShotBot") {
+            if (chosenUpgrades.count(UpgradeArea::SHOOT)) {
+                string msg = name + " already chose a shooting upgrade.";
+                cout << msg << endl;
+                if (logger) logger->log(msg);
+                return;
+            }
+            shells = 30;
+            hasThirtyShot = true;
+            chosenUpgrades.insert(UpgradeArea::SHOOT);
+            string msg = name + " upgraded to ThirtyShotBot with 30 shells!";
+            cout << msg << endl;
+            if (logger) logger->log(msg);
+
+        } else if (upgradeName == "ScoutBot") {
+            if (chosenUpgrades.count(UpgradeArea::SEE)) {
+                string msg = name + " already chose a vision upgrade.";
+                cout << msg << endl;
+                if (logger) logger->log(msg);
+                return;
+            }
+            hasScout = true;
+            scoutCount = 3;
+            chosenUpgrades.insert(UpgradeArea::SEE);
+            string msg = name + " upgraded to ScoutBot!";
+            cout << msg << endl;
+            if (logger) logger->log(msg);
+
+        } else if (upgradeName == "TrackBot") {
+            if (chosenUpgrades.count(UpgradeArea::SEE)) {
+                string msg = name + " already chose a vision upgrade.";
+                cout << msg << endl;
+                if (logger) logger->log(msg);
+                return;
+            }
+            hasTrack = true;
+            trackerCount = 3;
+            chosenUpgrades.insert(UpgradeArea::SEE);
+            string msg = name + " upgraded to TrackBot!";
+            cout << msg << endl;
+            if (logger) logger->log(msg);
+
+        } else {
+            string msg = "Unknown upgrade: " + upgradeName;
+            cout << msg << endl;
+            if (logger) logger->log(msg);
+        }
     }
 
-    if (upgradeName == "HideBot") {
-        if (chosenUpgrades.count(UpgradeArea::MOVE)) {
-            cout << name << " already chose a movement upgrade.\n";
-            return;
-        }
-        hasHide = true;
-        hideCount = 3;
-        chosenUpgrades.insert(UpgradeArea::MOVE);
-        cout << name << " upgraded to HideBot!\n";
-    } else if (upgradeName == "JumpBot") {
-        if (chosenUpgrades.count(UpgradeArea::MOVE)) {
-            cout << name << " already chose a movement upgrade.\n";
-            return;
-        }
-        hasJump = true;
-        jumpCount = 3;
-        chosenUpgrades.insert(UpgradeArea::MOVE);
-        cout << name << " upgraded to JumpBot!\n";
-    } else if (upgradeName == "LongShotBot") {
-        if (chosenUpgrades.count(UpgradeArea::SHOOT)) {
-            cout << name << " already chose a shooting upgrade.\n";
-            return;
-        }
-        hasLongShot = true;
-        chosenUpgrades.insert(UpgradeArea::SHOOT);
-        cout << name << " upgraded to LongShotBot!\n";
-    } else if (upgradeName == "SemiAutoBot") {
-        if (chosenUpgrades.count(UpgradeArea::SHOOT)) {
-            cout << name << " already chose a shooting upgrade.\n";
-            return;
-        }
-        hasSemiAuto = true;
-        chosenUpgrades.insert(UpgradeArea::SHOOT);
-        cout << name << " upgraded to SemiAutoBot!\n";
-    } else if (upgradeName == "ThirtyShotBot") {
-        if (chosenUpgrades.count(UpgradeArea::SHOOT)) {
-            cout << name << " already chose a shooting upgrade.\n";
-            return;
-        }
-        shells = 30;
-        hasThirtyShot = true;
-        chosenUpgrades.insert(UpgradeArea::SHOOT);
-        cout << name << " upgraded to ThirtyShotBot with 30 shells!\n";
-    } else if (upgradeName == "ScoutBot") {
-        if (chosenUpgrades.count(UpgradeArea::SEE)) {
-            cout << name << " already chose a vision upgrade.\n";
-            return;
-        }
-        hasScout = true;
-        scoutCount = 3;
-        chosenUpgrades.insert(UpgradeArea::SEE);
-        cout << name << " upgraded to ScoutBot!\n";
-    } else if (upgradeName == "TrackBot") {
-        if (chosenUpgrades.count(UpgradeArea::SEE)) {
-            cout << name << " already chose a vision upgrade.\n";
-            return;
-        }
-        hasTrack = true;
-        trackerCount = 3;
-        chosenUpgrades.insert(UpgradeArea::SEE);
-        cout << name << " upgraded to TrackBot!\n";
-    } else {
-        cout << "Unknown upgrade: " << upgradeName << "\n";
-    }
-}
 
 bool Battlefield::loadConfig(const string& filename) {
     ifstream file(filename);
@@ -398,11 +442,21 @@ bool Battlefield::loadConfig(const string& filename) {
     while (getline(file, line)) {
         if (line.empty()) continue;
         if (line.find("M by N") != string::npos) {
-            sscanf(line.c_str(), "M by N : %d %d", &width, &height);
-            cout << "M by N : " << width << " by " << height << endl;
+            size_t colon_pos = line.find(':');
+            if (colon_pos != string::npos) {
+                string dimensions = line.substr(colon_pos + 1);
+                istringstream iss(dimensions);
+                iss >> width >> height;
+                cout << "M by N : " << width << " by " << height << endl;
+            }
         } else if (line.find("steps:") != string::npos) {
-            sscanf(line.c_str(), "steps: %d", &steps);
-            cout << "Steps : " << steps << endl;
+            size_t colon_pos = line.find(':');
+            if (colon_pos != string::npos) {
+                string step_str = line.substr(colon_pos + 1);
+                istringstream iss(step_str);
+                iss >> steps;
+                cout << "Steps : " << steps << endl;
+            }
         } else if (line.find("GenericRobot") != string::npos) {
             string tag, name, xStr, yStr;
             istringstream iss(line);
@@ -417,22 +471,25 @@ bool Battlefield::loadConfig(const string& filename) {
     return true;
 }
 
-void Battlefield::runStep() {
-    if (robots.empty()) return;
+bool Battlefield::runStep() {
+    if (robots.empty()) return false;
+
     clearScreen();
     if (currentRobotIndex >= robots.size()) currentRobotIndex = 0;
 
-    // Cast to ThinkingRobot
     ThinkingRobot* thinker = dynamic_cast<ThinkingRobot*>(robots[currentRobotIndex].get());
     if (thinker) {
         thinker->think(this, width, height, logger);
     } else {
         cerr << "Error: Robot does not implement ThinkingRobot!" << endl;
-
     }
     currentRobotIndex++;
     display();
+
+    // Check if 1 or fewer robots remain
+    return robots.size() > 1;
 }
+
 
 void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
     for (auto it = robots.begin(); it != robots.end(); ++it) {
@@ -444,7 +501,7 @@ void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
             }
 
         int chance = rand()% 100;
-        if (chance < 70){
+        if (chance < 100){
             cout << "Target hit! " << (*it)->getName() << " !\n";
             if (logger) logger->log("Target hit! " + (*it)->getName() + " !");
 
@@ -453,31 +510,66 @@ void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
             target->loseLife();
             cout << "Target hit! " << (*it)->getName() << " lost a life. Lives left: " << target->getLives() << "\n";
             if (logger) logger->log("Target hit! " + (*it)->getName() + " lost a life. Lives left: " + to_string(target->getLives()));
-            if (target->getLives() > 0) {
-                return; //not destroy which still alive
-            }
+        
             GenericRobot* gr = dynamic_cast<GenericRobot*>(shooter);
             if (gr) {
+                // ✨ Missing declaration here
                 vector<string> upgrades;
-                if (!gr->isHideBot() && !gr->isJumpBot()) upgrades.push_back("HideBot"), upgrades.push_back("JumpBot");
-                if (!gr->isLongShot() && !gr->isSemiAuto() && !gr->isThirtyShot()) upgrades.push_back("SemiAutoBot"), upgrades.push_back("ThirtyShotBot");
-                if (!gr->isScout() && !gr->isTrackBot()) upgrades.push_back("ScoutBot"), upgrades.push_back("TrackBot");
+
+                const set<UpgradeArea>& upgradesTaken = gr->getChosenUpgrades();
+
+                if (!upgradesTaken.count(UpgradeArea::MOVE)) {
+                    upgrades.push_back("HideBot");
+                    upgrades.push_back("JumpBot");
+                }
+                if (!upgradesTaken.count(UpgradeArea::SHOOT)) {
+                    upgrades.push_back("LongShotBot");
+                    upgrades.push_back("SemiAutoBot");
+                    upgrades.push_back("ThirtyShotBot");
+                }
+                if (!upgradesTaken.count(UpgradeArea::SEE)) {
+                    upgrades.push_back("ScoutBot");
+                    upgrades.push_back("TrackBot");
+                }
 
                 if (!upgrades.empty()) {
                     string chosen = upgrades[rand() % upgrades.size()];
-                    gr->applyUpgrade(chosen);
+                    gr->applyUpgrade(chosen, logger);
                 }
+
             }
 
-            robots.erase(it);
-        } else {
-            cout << "Shot fired at"<< (*it)->getName() << " but missed\n";
+            if (target->getLives() <= 0) {
+                logger->log(target->getName() + " was destroyed by " + shooter->getName());
+                robots.erase(it);
             }
+
+
+        } else {
+                string noTargetMsg = "Missed! No robot at (" + to_string(x) + "," + to_string(y) + ").";
+                cout << noTargetMsg << endl;
+                if (logger) logger->log(noTargetMsg);
+
+            }
+        }
+    }
+    string noTargetMsg = "Missed! No robot at (" + to_string(x) + "," + to_string(y) + ").";
+    cout << noTargetMsg << endl;
+    if (logger) logger->log(noTargetMsg);
+
+}
+
+void Battlefield::markSelfDestruct(Robot* robot) {
+    for (auto it = robots.begin(); it != robots.end(); ++it) {
+        if (it->get() == robot) {
+            cout << robot->getName() << " has self-destructed!\n";
+            if (logger) logger->log(robot->getName() + " has self-destructed.");
+            robots.erase(it);
             return;
         }
     }
-    cout << "Missed! No robot at (" << x << "," << y << ").\n";
 }
+
 
 void Battlefield::display() const {
     cout << "    ";
@@ -523,21 +615,24 @@ int main() {
         return 1;
     }
 
-    cout << "------------ RobotWar ---------------\n";
-    cout << "Enter any key to start the simulation?";
-    int a;
-    cin >> a;
-    logger.log("Simulation started.");
-    logger.log("Steps: " + to_string(battlefield.getSteps()));
-    
+
 
     battlefield.display();
 
+    int maxSteps = battlefield.getSteps();
     for (int step = 0; step < battlefield.getSteps(); ++step) {
         logger.log("--- Step " + to_string(step + 1) + " ---");
-        battlefield.runStep();
-        Sleep(5000);
+
+        if (!battlefield.runStep()) {
+            logger.log("Simulation ended early only one robot left in the battlefield");
+            cout << "Simulation ended early robot above is the last one standing\n";
+            cout << "Simulation stopped at Step : " << step << endl;
+            break;
+        }
+
+        Sleep(1000);
     }
+
 
     logger.log("Simulation ended.");
     cout << "\nSimulation ended.\n";
