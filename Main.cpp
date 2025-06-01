@@ -12,8 +12,8 @@ STUDENT 3:
     Name: AMIRA RAHEEMA BINTI MOHAMAD KAMAROL
     ID: 242UC244MB
 STUDENT 4:
-    Name: 
-    ID:
+    Name: LIEW ZHI YONG 
+    ID: 242UC244TH
 Lecture Section: TC
 Tutorial Section: TT1L
 **********|**********|**********/
@@ -153,6 +153,8 @@ public:
     void checkAndHitRobot(int x, int y, Robot* shooter);
     int getSteps() const { return steps; }
     void markSelfDestruct(Robot* robot);
+    const vector<unique_ptr<Robot>>& getRobots() const { return robots; }
+
 };
 
 class GenericRobot : public Robot, public MovingRobot, public ShootingRobot, public SeeingRobot, public ThinkingRobot {
@@ -172,6 +174,8 @@ private:
     int jumpCount = 3;
     int scoutCount = 3;
     int trackerCount = 3;
+    int lastDx = 0;
+    int lastDy = 0;
 
 public:
     bool isHideBot() const { return hasHide; }
@@ -226,99 +230,132 @@ public:
         if (logger) logger->log(name + " is thinking...");
         cout << name << " is thinking..." << endl;
 
-        // Use JumpBot
+        // Get all robots through proper access
+        const auto& allRobots = battlefield->getRobots();
+
+        // 1. Use special abilities (JumpBot/HideBot)
         if (hasJump && jumpCount > 0 && (rand() % 10 == 0)) {
             positionX = rand() % maxWidth;
             positionY = rand() % maxHeight;
             jumpCount--;
-
             stringstream ss;
             ss << name << " used JumpBot ability to jump to (" << positionX << "," << positionY << ")";
             cout << ss.str() << endl;
             if (logger) logger->log(ss.str());
+            return; // Jumping counts as the move for this turn
         }
 
-        // Use HideBot
         if (hasHide && hideCount > 0 && (rand() % 10 == 0)) {
             hideCount--;
-
             stringstream ss;
             ss << name << " used HideBot ability and is hiding this turn.";
             cout << ss.str() << endl;
             if (logger) logger->log(ss.str());
-            return;
+            return; // Hiding skips the rest of the turn
         }
 
-        int dx = (rand() % 3) - 1;
-        int dy = (rand() % 3) - 1;
-        int tx = positionX + dx;
-        int ty = positionY + dy;
-
-         //avoid robot suicide
-        if (dx == 0 && dy == 0){
-            if(logger) logger->log(name + " Skipped firing to avoid shooting itself.");
-            cout << name << " Skipped firing to avoid shooting itself." << endl;
-            return;
+        // 2. LOOK: Always scan the environment
+        Robot* nearestEnemy = nullptr;
+        int minDist = INT_MAX;
+        for (const auto& robot : allRobots) {
+            if (robot.get() != this) {
+                int dist = abs(robot->getX() - positionX) + abs(robot->getY() - positionY);
+                if (dist < minDist) {
+                    minDist = dist;
+                    nearestEnemy = robot.get();
+                }
+            }
         }
 
-        // Use ScoutBot
-        if (hasScout && scoutCount > 0 && (rand() % 10 == 0)) {
+        // Use ScoutBot if available
+        if (hasScout && scoutCount > 0 && (minDist > 3 || nearestEnemy == nullptr)) {
             scoutCount--;
-
             stringstream ss;
             ss << name << " used ScoutBot to scan the entire battlefield.";
             cout << ss.str() << endl;
             if (logger) logger->log(ss.str());
         }
-        // Optional: implement scan display logic here
-        if (rand() % 2 == 0) {
-            look(positionX + dx, positionY + dy, logger);
-        } else {
-            look(tx, ty, logger);
-        }
 
-        // FIRE logic with upgrade + hit check
+        // Standard looking behavior
+        int lookX = positionX, lookY = positionY;
+        if (nearestEnemy) {
+            lookX = nearestEnemy->getX();
+            lookY = nearestEnemy->getY();
+        } else {
+            lookX += (rand() % 3) - 1;
+            lookY += (rand() % 3) - 1;
+        }
+        look(lookX, lookY, logger);
+
+        // 3. FIRE: Attempt to fire if conditions are right
         if (shells <= 0) {
             cout << name << " is out of ammo and will self-destruct!\n";
             if (logger) logger->log(name + " is out of ammo and will self-destruct!");
             battlefield->markSelfDestruct(this);
-            return; // stop turn early
-        } else {
+            return;
+        }
+
+        if (nearestEnemy && minDist <= (hasLongShot ? 4 : 1)) {
             if (hasSemiAuto) {
                 for (int i = 0; i < 3 && shells > 0; ++i) {
-                    shells--;
-                    stringstream ss;
-                    ss << name << " fires at (" << tx << "," << ty << "). Shells left: " << shells;
-                    cout << ss.str() << endl;
-                    if (logger) logger->log(ss.str());
-                    battlefield->checkAndHitRobot(tx, ty, this);
+                    fire(nearestEnemy->getX(), nearestEnemy->getY(), logger);
+                    battlefield->checkAndHitRobot(nearestEnemy->getX(), nearestEnemy->getY(), this);
                 }
-            } else if (hasLongShot) {
-                int range = 1 + rand() % 3;
-                int lx = positionX + dx * range;
-                int ly = positionY + dy * range;
-                shells--;
-                stringstream ss;
-                ss << name << " fires (LongShot) at (" << lx << "," << ly << "). Shells left: " << shells;
-                cout << ss.str() << endl;
-                if (logger) logger->log(ss.str());
-                battlefield->checkAndHitRobot(lx, ly, this);
-
-            } else {
-                shells--;
-                stringstream ss;
-                ss << name << " fires at (" << tx << "," << ty << "). Shells left: " << shells;
-                cout << ss.str() << endl;
-                if (logger) logger->log(ss.str());
+            } 
+            else if (hasLongShot) {
+                int dx = nearestEnemy->getX() - positionX;
+                int dy = nearestEnemy->getY() - positionY;
+                int tx = nearestEnemy->getX() + (dx > 0 ? 1 : -1);
+                int ty = nearestEnemy->getY() + (dy > 0 ? 1 : -1);
+                fire(tx, ty, logger);
                 battlefield->checkAndHitRobot(tx, ty, this);
-                move(dx, dy, maxWidth, maxHeight, logger);
+            } 
+            else {
+                fire(nearestEnemy->getX(), nearestEnemy->getY(), logger);
+                battlefield->checkAndHitRobot(nearestEnemy->getX(), nearestEnemy->getY(), this);
             }
         }
 
-/*         //normal move
-        if (rand() % 2 == 0) {
-            move(dx, dy, maxWidth, maxHeight, logger);
-        } */
+        // 4. MOVE: Always move to a new position
+        int oldX = positionX, oldY = positionY;
+        int moveDx = 0, moveDy = 0;
+        
+        if (nearestEnemy) {
+            int dx = nearestEnemy->getX() - positionX;
+            int dy = nearestEnemy->getY() - positionY;
+            
+            // Move toward enemy if far, away if too close
+            if (minDist > 2) {
+                moveDx = (dx > 0) ? 1 : (dx < 0) ? -1 : 0;
+                moveDy = (dy > 0) ? 1 : (dy < 0) ? -1 : 0;
+            } 
+            else if (minDist < 2) {
+                moveDx = (dx > 0) ? -1 : (dx < 0) ? 1 : 0;
+                moveDy = (dy > 0) ? -1 : (dy < 0) ? 1 : 0;
+            }
+        } 
+        else {
+            // Random exploration
+            moveDx = (rand() % 3) - 1;
+            moveDy = (rand() % 3) - 1;
+        }
+
+        // Ensure we actually move to a new position
+        if (moveDx == 0 && moveDy == 0) {
+            // If no movement was calculated, pick a random direction
+            do {
+                moveDx = (rand() % 3) - 1;
+                moveDy = (rand() % 3) - 1;
+            } while (moveDx == 0 && moveDy == 0);
+        }
+
+        positionX = max(0, min(positionX + moveDx, maxWidth - 1));
+        positionY = max(0, min(positionY + moveDy, maxHeight - 1));
+
+        stringstream ss;
+        ss << name << " moved from (" << oldX << "," << oldY << ") to (" << positionX << "," << positionY << ")";
+        cout << ss.str() << endl;
+        if (logger) logger->log(ss.str());
     }
 };
 
@@ -475,20 +512,29 @@ bool Battlefield::runStep() {
     if (robots.empty()) return false;
 
     clearScreen();
+
     if (currentRobotIndex >= robots.size()) currentRobotIndex = 0;
 
-    ThinkingRobot* thinker = dynamic_cast<ThinkingRobot*>(robots[currentRobotIndex].get());
+    Robot* currentRobotPtr = robots[currentRobotIndex].get();
+
+    ThinkingRobot* thinker = dynamic_cast<ThinkingRobot*>(currentRobotPtr);
     if (thinker) {
         thinker->think(this, width, height, logger);
     } else {
         cerr << "Error: Robot does not implement ThinkingRobot!" << endl;
     }
-    currentRobotIndex++;
+
+    // Only increment if robot wasn't destroyed
+    if (currentRobotIndex < robots.size() && robots[currentRobotIndex].get() == currentRobotPtr) {
+        currentRobotIndex++;
+    }
+
     display();
 
-    // Check if 1 or fewer robots remain
-    return robots.size() > 1;
+    return true;
 }
+
+
 
 
 void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
@@ -513,7 +559,6 @@ void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
         
             GenericRobot* gr = dynamic_cast<GenericRobot*>(shooter);
             if (gr) {
-                // ✨ Missing declaration here
                 vector<string> upgrades;
 
                 const set<UpgradeArea>& upgradesTaken = gr->getChosenUpgrades();
@@ -623,15 +668,28 @@ int main() {
     for (int step = 0; step < battlefield.getSteps(); ++step) {
         logger.log("--- Step " + to_string(step + 1) + " ---");
 
+        // Run one robot's turn
         if (!battlefield.runStep()) {
+            // This happens when robots.size() <= 1
             logger.log("Simulation ended early only one robot left in the battlefield");
             cout << "Simulation ended early robot above is the last one standing\n";
-            cout << "Simulation stopped at Step : " << step << endl;
+            cout << "Simulation stopped at Step : " << step + 1 << endl;
             break;
         }
 
-        Sleep(1000);
+        // EXTRA CHECK: if runStep() returned true but there's only one robot this one is due to a bug oawhdowahdoa
+        if (battlefield.getRobots().size() <= 1) {
+            logger.log("Simulation ended early only one robot left in the battlefield");
+            cout << "Simulation ended early robot above is the last one standing\n";
+            cout << "Simulation stopped at Step : " << step + 1 << endl;
+            break;
+        }
+
+        Sleep(100);
     }
+
+
+
 
 
     logger.log("Simulation ended.");

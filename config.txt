@@ -1,4 +1,4 @@
-M by N : 4 4
+M by N : 8 8
 steps: 100
 GenericRobot Thaqif random random
 GenericRobot Rara 5 5
