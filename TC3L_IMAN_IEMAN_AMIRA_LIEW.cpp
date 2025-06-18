@@ -12,9 +12,9 @@ STUDENT 3:
     Name: AMIRA RAHEEMA BINTI MOHAMAD KAMAROL
     ID: 242UC244MB
 STUDENT 4:
-    Name: LIEW ZHI YONG 
+    Name: LIEW ZHI YONG
     ID: 242UC244TH
-Lecture Section: TC
+Lecture Section: TC3L
 Tutorial Section: TT1L
 **********|**********|**********/
 
@@ -117,7 +117,7 @@ public:
     int getX() const { return positionX; }
     int getY() const { return positionY; }
     int getLives() const { return lives; }
-    void setLives(int l) { lives = 3; } //-- setter
+    void setLives(int l) { lives = 3; } //-- Setter
     void loseLife() { if (lives>0) --lives; }
     char getSymbol() const { return symbol; }
 
@@ -301,7 +301,7 @@ public:
                     fire(nearestEnemy->getX(), nearestEnemy->getY(), logger);
                     battlefield->checkAndHitRobot(nearestEnemy->getX(), nearestEnemy->getY(), this);
                 }
-            } 
+            }
             else if (hasLongShot) {
                 int dx = nearestEnemy->getX() - positionX;
                 int dy = nearestEnemy->getY() - positionY;
@@ -309,7 +309,7 @@ public:
                 int ty = nearestEnemy->getY() + (dy > 0 ? 1 : -1);
                 fire(tx, ty, logger);
                 battlefield->checkAndHitRobot(tx, ty, this);
-            } 
+            }
             else {
                 fire(nearestEnemy->getX(), nearestEnemy->getY(), logger);
                 battlefield->checkAndHitRobot(nearestEnemy->getX(), nearestEnemy->getY(), this);
@@ -319,21 +319,21 @@ public:
         // 4. MOVE: Always move to a new position
         int oldX = positionX, oldY = positionY;
         int moveDx = 0, moveDy = 0;
-        
+
         if (nearestEnemy) {
             int dx = nearestEnemy->getX() - positionX;
             int dy = nearestEnemy->getY() - positionY;
-            
+
             // Move toward enemy if far, away if too close
             if (minDist > 2) {
                 moveDx = (dx > 0) ? 1 : (dx < 0) ? -1 : 0;
                 moveDy = (dy > 0) ? 1 : (dy < 0) ? -1 : 0;
-            } 
+            }
             else if (minDist < 2) {
                 moveDx = (dx > 0) ? -1 : (dx < 0) ? 1 : 0;
                 moveDy = (dy > 0) ? -1 : (dy < 0) ? 1 : 0;
             }
-        } 
+        }
         else {
             // Random exploration
             moveDx = (rand() % 3) - 1;
@@ -509,8 +509,8 @@ bool Battlefield::loadConfig(const string& filename) {
 }
 
 bool Battlefield::runStep() {
-    if (robots.empty()) return false;
-
+    //if (robots.empty()) return false;
+    if (robots.size() <= 1) return false;
     clearScreen();
 
     if (currentRobotIndex >= robots.size()) currentRobotIndex = 0;
@@ -556,7 +556,7 @@ void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
             target->loseLife();
             cout << "Target hit! " << (*it)->getName() << " lost a life. Lives left: " << target->getLives() << "\n";
             if (logger) logger->log("Target hit! " + (*it)->getName() + " lost a life. Lives left: " + to_string(target->getLives()));
-        
+
             GenericRobot* gr = dynamic_cast<GenericRobot*>(shooter);
             if (gr) {
                 vector<string> upgrades;

@@ -1,0 +1,123 @@
+--- Step 1 ---
+Thaqif is thinking...
+Thaqif is looking at (5,5)
+Thaqif moved from (5,7) to (4,7)
+--- Step 2 ---
+Rara is thinking...
+Rara is looking at (4,7)
+Rara moved from (5,5) to (4,6)
+--- Step 3 ---
+Ieman is thinking...
+Ieman is looking at (4,6)
+Ieman fires at (4,6). Shells left: 9
+Target hit! Rara !
+Target hit! Rara lost a life. Lives left: 2
+Ieman upgraded to TrackBot!
+Missed! No robot at (4,6).
+Ieman moved from (3,6) to (2,6)
+--- Step 4 ---
+Marcuz is thinking...
+Marcuz is looking at (4,6)
+Marcuz moved from (3,3) to (4,4)
+--- Step 5 ---
+Thaqif is thinking...
+Thaqif is looking at (4,6)
+Thaqif fires at (4,6). Shells left: 9
+Target hit! Rara !
+Target hit! Rara lost a life. Lives left: 1
+Thaqif upgraded to SemiAutoBot!
+Missed! No robot at (4,6).
+Thaqif moved from (4,7) to (4,7)
+--- Step 6 ---
+Rara is thinking...
+Rara is looking at (4,7)
+Rara fires at (4,7). Shells left: 9
+Target hit! Thaqif !
+Target hit! Thaqif lost a life. Lives left: 2
+Rara upgraded to SemiAutoBot!
+Missed! No robot at (4,7).
+Rara moved from (4,6) to (4,5)
+--- Step 7 ---
+Ieman is thinking...
+Ieman is looking at (4,7)
+Ieman moved from (2,6) to (3,7)
+--- Step 8 ---
+Marcuz is thinking...
+Marcuz is looking at (4,5)
+Marcuz fires at (4,5). Shells left: 9
+Target hit! Rara !
+Target hit! Rara lost a life. Lives left: 0
+Marcuz upgraded to SemiAutoBot!
+Rara was destroyed by Marcuz
+Missed! No robot at (4,5).
+Marcuz moved from (4,4) to (4,3)
+--- Step 9 ---
+Thaqif is thinking...
+Thaqif is looking at (3,7)
+Thaqif fires at (3,7). Shells left: 8
+Target hit! Ieman !
+Target hit! Ieman lost a life. Lives left: 2
+Thaqif upgraded to HideBot!
+Missed! No robot at (3,7).
+Thaqif fires at (3,7). Shells left: 7
+Target hit! Ieman !
+Target hit! Ieman lost a life. Lives left: 1
+Thaqif upgraded to ScoutBot!
+Missed! No robot at (3,7).
+Thaqif fires at (3,7). Shells left: 6
+Target hit! Ieman !
+Target hit! Ieman lost a life. Lives left: 0
+Ieman was destroyed by Thaqif
+Missed! No robot at (3,7).
+Thaqif moved from (4,7) to (5,7)
+--- Step 10 ---
+Marcuz is thinking...
+Marcuz is looking at (5,7)
+Marcuz moved from (4,3) to (5,4)
+--- Step 11 ---
+Thaqif is thinking...
+Thaqif is looking at (5,4)
+Thaqif moved from (5,7) to (5,6)
+--- Step 12 ---
+Marcuz is thinking...
+Marcuz is looking at (5,6)
+Marcuz moved from (5,4) to (6,3)
+--- Step 13 ---
+Thaqif is thinking...
+Thaqif used ScoutBot to scan the entire battlefield.
+Thaqif is looking at (6,3)
+Thaqif moved from (5,6) to (6,5)
+--- Step 14 ---
+Marcuz is thinking...
+Marcuz is looking at (6,5)
+Marcuz moved from (6,3) to (7,4)
+--- Step 15 ---
+Thaqif is thinking...
+Thaqif is looking at (7,4)
+Thaqif moved from (6,5) to (7,6)
+--- Step 16 ---
+Marcuz is thinking...
+Marcuz is looking at (7,6)
+Marcuz moved from (7,4) to (7,5)
+--- Step 17 ---
+Thaqif is thinking...
+Thaqif used HideBot ability and is hiding this turn.
+--- Step 18 ---
+Marcuz is thinking...
+Marcuz is looking at (7,6)
+Marcuz fires at (7,6). Shells left: 8
+Target hit! Thaqif !
+Target hit! Thaqif lost a life. Lives left: 1
+Marcuz upgraded to TrackBot!
+Missed! No robot at (7,6).
+Marcuz fires at (7,6). Shells left: 7
+Target hit! Thaqif !
+Target hit! Thaqif lost a life. Lives left: 0
+Marcuz upgraded to HideBot!
+Thaqif was destroyed by Marcuz
+Missed! No robot at (7,6).
+Marcuz fires at (7,6). Shells left: 6
+Missed! No robot at (7,6).
+Marcuz moved from (7,5) to (7,4)
+Simulation ended early only one robot left in the battlefield
+Simulation ended.
