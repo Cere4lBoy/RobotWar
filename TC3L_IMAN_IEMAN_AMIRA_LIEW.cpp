@@ -470,6 +470,322 @@ public:
         }
     }
 
+class KamikazeBot : public Robot, public MovingRobot, public ShootingRobot, public SeeingRobot, public ThinkingRobot {
+private:
+    bool willExplode = false;
+    
+public:
+    KamikazeBot(string name, int x, int y) : Robot(name, x, y) {}
+
+    void move(int dx, int dy, int maxWidth, int maxHeight, Logger* logger) override {
+        if (willExplode) return;
+        
+        int oldX = positionX, oldY = positionY;
+        positionX = max(0, min(positionX + dx, maxWidth - 1));
+        positionY = max(0, min(positionY + dy, maxHeight - 1));
+
+        stringstream ss;
+        ss << name << " moved from (" << oldX << "," << oldY << ") to (" << positionX << "," << positionY << ")";
+        cout << ss.str() << endl;
+        if (logger) logger->log(ss.str());
+    }
+
+    void fire(int targetX, int targetY, Logger* logger) override {
+        stringstream ss;
+        ss << name << " is preparing its explosive charge";
+        cout << ss.str() << endl;
+        if (logger) logger->log(ss.str());
+    }
+
+    void look(int x, int y, Logger* logger) override {
+        stringstream ss;
+        ss << name << " is scanning area around (" << x << "," << y << ")";
+        cout << ss.str() << endl;
+        if (logger) logger->log(ss.str());
+    }
+
+    void think(Battlefield* battlefield, int maxWidth, int maxHeight, Logger* logger) override {
+        if (logger) logger->log(name + " is thinking...");
+        cout << name << " is thinking..." << endl;
+
+        // 1. Look phase
+        Robot* nearestEnemy = nullptr;
+        int minDist = INT_MAX;
+        const auto& allRobots = battlefield->getRobots();
+        for (const auto& robot : allRobots) {
+            if (robot.get() != this) {
+                int dist = abs(robot->getX() - positionX) + abs(robot->getY() - positionY);
+                if (dist < minDist) {
+                    minDist = dist;
+                    nearestEnemy = robot.get();
+                }
+            }
+        }
+
+        int lookX = positionX, lookY = positionY;
+        if (nearestEnemy) {
+            lookX = nearestEnemy->getX();
+            lookY = nearestEnemy->getY();
+        } else {
+            lookX += (rand() % 3) - 1;
+            lookY += (rand() % 3) - 1;
+        }
+        look(lookX, lookY, logger);
+
+        // 2. Fire phase (Kamikaze only explodes when adjacent)
+        if (nearestEnemy && minDist <= 1) {
+            willExplode = true;
+            stringstream ss;
+            ss << name << " is exploding to take out nearby enemies!";
+            cout << ss.str() << endl;
+            if (logger) logger->log(ss.str());
+            
+            // Damage all adjacent robots
+            for (int x = positionX-1; x <= positionX+1; x++) {
+                for (int y = positionY-1; y <= positionY+1; y++) {
+                    if (x >= 0 && x < maxWidth && y >= 0 && y < maxHeight) {
+                        battlefield->checkAndHitRobot(x, y, this);
+                    }
+                }
+            }
+            battlefield->markSelfDestruct(this);
+            return;
+        }
+        else {
+            fire(positionX, positionY, logger); // Standard fire action
+        }
+
+        // 3. Move phase
+        if (nearestEnemy) {
+            // Move toward enemy
+            int dx = nearestEnemy->getX() - positionX;
+            int dy = nearestEnemy->getY() - positionY;
+            move(dx > 0 ? 1 : -1, dy > 0 ? 1 : -1, maxWidth, maxHeight, logger);
+        } else {
+            // Random movement if no enemy found
+            move((rand() % 3) - 1, (rand() % 3) - 1, maxWidth, maxHeight, logger);
+        }
+    }
+};
+
+class MineLayerBot : public Robot, public MovingRobot, public ShootingRobot, public SeeingRobot, public ThinkingRobot {
+private:
+    int minesLeft = 5;
+    vector<pair<int, int>> placedMines;
+    
+public:
+    MineLayerBot(string name, int x, int y) : Robot(name, x, y) {}
+
+    void move(int dx, int dy, int maxWidth, int maxHeight, Logger* logger) override {
+        int oldX = positionX, oldY = positionY;
+        positionX = max(0, min(positionX + dx, maxWidth - 1));
+        positionY = max(0, min(positionY + dy, maxHeight - 1));
+
+        // 30% chance to lay mine when moving
+        if (minesLeft > 0 && rand() % 10 < 3) {
+            minesLeft--;
+            placedMines.emplace_back(oldX, oldY);
+            stringstream ss;
+            ss << name << " laid a mine at (" << oldX << "," << oldY << ")";
+            cout << ss.str() << endl;
+            if (logger) logger->log(ss.str());
+        }
+
+        stringstream ss;
+        ss << name << " moved from (" << oldX << "," << oldY << ") to (" << positionX << "," << positionY << ")";
+        cout << ss.str() << endl;
+        if (logger) logger->log(ss.str());
+    }
+
+    void fire(int targetX, int targetY, Logger* logger) override {
+        stringstream ss;
+        ss << name << " checks its mine inventory (remaining: " << minesLeft << ")";
+        cout << ss.str() << endl;
+        if (logger) logger->log(ss.str());
+    }
+
+    void look(int x, int y, Logger* logger) override {
+        stringstream ss;
+        ss << name << " is scanning area around (" << x << "," << y << ")";
+        cout << ss.str() << endl;
+        if (logger) logger->log(ss.str());
+    }
+
+    void think(Battlefield* battlefield, int maxWidth, int maxHeight, Logger* logger) override {
+        if (logger) logger->log(name + " is thinking...");
+        cout << name << " is thinking..." << endl;
+
+        // 1. Look phase
+        Robot* nearestEnemy = nullptr;
+        int minDist = INT_MAX;
+        const auto& allRobots = battlefield->getRobots();
+        for (const auto& robot : allRobots) {
+            if (robot.get() != this) {
+                int dist = abs(robot->getX() - positionX) + abs(robot->getY() - positionY);
+                if (dist < minDist) {
+                    minDist = dist;
+                    nearestEnemy = robot.get();
+                }
+            }
+        }
+
+        int lookX = positionX, lookY = positionY;
+        if (nearestEnemy) {
+            lookX = nearestEnemy->getX();
+            lookY = nearestEnemy->getY();
+        } else {
+            lookX += (rand() % 3) - 1;
+            lookY += (rand() % 3) - 1;
+        }
+        look(lookX, lookY, logger);
+
+        // 2. Fire phase (Mine checking)
+        fire(positionX, positionY, logger);
+
+        // Check for mine triggers
+        for (auto it = placedMines.begin(); it != placedMines.end(); ) {
+            bool mineTriggered = false;
+            for (const auto& robot : battlefield->getRobots()) {
+                if (robot->getX() == it->first && robot->getY() == it->second) {
+                    stringstream ss;
+                    ss << "Mine at (" << it->first << "," << it->second << ") triggered by " << robot->getName();
+                    cout << ss.str() << endl;
+                    if (logger) logger->log(ss.str());
+                    
+                    battlefield->checkAndHitRobot(it->first, it->second, this);
+                    mineTriggered = true;
+                    break;
+                }
+            }
+            if (mineTriggered) {
+                it = placedMines.erase(it);
+            } else {
+                ++it;
+            }
+        }
+
+        // 3. Move phase
+        if (nearestEnemy) {
+            // Move to maintain distance
+            int dx = nearestEnemy->getX() - positionX;
+            int dy = nearestEnemy->getY() - positionY;
+            if (minDist > 3) {
+                move(dx > 0 ? 1 : -1, dy > 0 ? 1 : -1, maxWidth, maxHeight, logger);
+            } else if (minDist < 2) {
+                move(dx > 0 ? -1 : 1, dy > 0 ? -1 : 1, maxWidth, maxHeight, logger);
+            } else {
+                move(0, 0, maxWidth, maxHeight, logger); // Stay in place
+            }
+        } else {
+            // Random exploration
+            move((rand() % 3) - 1, (rand() % 3) - 1, maxWidth, maxHeight, logger);
+        }
+    }
+};
+
+class CloneBot : public Robot, public MovingRobot, public ShootingRobot, public SeeingRobot, public ThinkingRobot {
+private:
+    int cloneCharges = 3;
+    vector<unique_ptr<Robot>> clones;
+    
+public:
+    CloneBot(string name, int x, int y) : Robot(name, x, y) {}
+
+    void move(int dx, int dy, int maxWidth, int maxHeight, Logger* logger) override {
+        int oldX = positionX, oldY = positionY;
+        positionX = max(0, min(positionX + dx, maxWidth - 1));
+        positionY = max(0, min(positionY + dy, maxHeight - 1));
+
+        stringstream ss;
+        ss << name << " moved from (" << oldX << "," << oldY << ") to (" << positionX << "," << positionY << ")";
+        cout << ss.str() << endl;
+        if (logger) logger->log(ss.str());
+    }
+
+    void fire(int targetX, int targetY, Logger* logger) override {
+        stringstream ss;
+        ss << name << " checks its clone charges (remaining: " << cloneCharges << ")";
+        cout << ss.str() << endl;
+        if (logger) logger->log(ss.str());
+    }
+
+    void look(int x, int y, Logger* logger) override {
+        stringstream ss;
+        ss << name << " is observing (" << x << "," << y << ")";
+        cout << ss.str() << endl;
+        if (logger) logger->log(ss.str());
+    }
+
+    void think(Battlefield* battlefield, int maxWidth, int maxHeight, Logger* logger) override {
+        if (logger) logger->log(name + " is thinking...");
+        cout << name << " is thinking..." << endl;
+
+        // 1. Look phase
+        Robot* nearestEnemy = nullptr;
+        int minDist = INT_MAX;
+        const auto& allRobots = battlefield->getRobots();
+        for (const auto& robot : allRobots) {
+            if (robot.get() != this) {
+                int dist = abs(robot->getX() - positionX) + abs(robot->getY() - positionY);
+                if (dist < minDist) {
+                    minDist = dist;
+                    nearestEnemy = robot.get();
+                }
+            }
+        }
+
+        int lookX = positionX, lookY = positionY;
+        if (nearestEnemy) {
+            lookX = nearestEnemy->getX();
+            lookY = nearestEnemy->getY();
+        } else {
+            lookX += (rand() % 3) - 1;
+            lookY += (rand() % 3) - 1;
+        }
+        look(lookX, lookY, logger);
+
+        // 2. Fire phase (Clone creation)
+        fire(positionX, positionY, logger);
+        if (cloneCharges > 0 && rand() % 5 == 0) {
+            cloneCharges--;
+            int cloneX = max(0, min(positionX + (rand() % 3) - 1, maxWidth - 1));
+            int cloneY = max(0, min(positionY + (rand() % 3) - 1, maxHeight - 1));
+            
+            auto clone = make_unique<Robot>(name + "'s Clone", cloneX, cloneY);
+            clones.push_back(std::move(clone));
+            
+            stringstream ss;
+            ss << name << " created a clone at (" << cloneX << "," << cloneY << ")";
+            cout << ss.str() << endl;
+            if (logger) logger->log(ss.str());
+        }
+
+        // 3. Move phase
+        if (nearestEnemy) {
+            // Move to flank enemy
+            int dx = nearestEnemy->getX() - positionX;
+            int dy = nearestEnemy->getY() - positionY;
+            if (abs(dx) > abs(dy)) {
+                move(dx > 0 ? 1 : -1, 0, maxWidth, maxHeight, logger);
+            } else {
+                move(0, dy > 0 ? 1 : -1, maxWidth, maxHeight, logger);
+            }
+        } else {
+            // Random movement
+            move((rand() % 3) - 1, (rand() % 3) - 1, maxWidth, maxHeight, logger);
+        }
+
+        // Clean up destroyed clones
+        clones.erase(
+            remove_if(clones.begin(), clones.end(), 
+                [](const unique_ptr<Robot>& clone) { return clone->getLives() <= 0; }),
+            clones.end()
+        );
+    }
+};
+
+
+
 
 bool Battlefield::loadConfig(const string& filename) {
     ifstream file(filename);
@@ -504,6 +820,36 @@ bool Battlefield::loadConfig(const string& filename) {
             robots.push_back(make_unique<GenericRobot>(name, x, y));
             cout << tag << " " << name << " " << xStr << " " << yStr << endl;
         }
+        else if (line.find("KamikazeBot") != string::npos) {
+            string tag, name, xStr, yStr;
+            istringstream iss(line);
+            int x, y;
+            iss >> tag >> name >> xStr >> yStr;
+            x = (xStr == "random") ? rand() % width : stoi(xStr);
+            y = (yStr == "random") ? rand() % height : stoi(yStr);
+            robots.push_back(make_unique<KamikazeBot>(name, x, y));
+            cout << tag << " " << name << " " << xStr << " " << yStr << endl;
+        }
+        else if (line.find("MineLayerBot") != string::npos) {
+            string tag, name, xStr, yStr;
+            istringstream iss(line);
+            int x, y;
+            iss >> tag >> name >> xStr >> yStr;
+            x = (xStr == "random") ? rand() % width : stoi(xStr);
+            y = (yStr == "random") ? rand() % height : stoi(yStr);
+            robots.push_back(make_unique<MineLayerBot>(name, x, y));
+            cout << tag << " " << name << " " << xStr << " " << yStr << endl;
+        }
+        else if (line.find("CloneBot") != string::npos) {
+            string tag, name, xStr, yStr;
+            istringstream iss(line);
+            int x, y;
+            iss >> tag >> name >> xStr >> yStr;
+            x = (xStr == "random") ? rand() % width : stoi(xStr);
+            y = (yStr == "random") ? rand() % height : stoi(yStr);
+            robots.push_back(make_unique<CloneBot>(name, x, y));
+            cout << tag << " " << name << " " << xStr << " " << yStr << endl;
+        }
     }
     return true;
 }
@@ -515,6 +861,17 @@ bool Battlefield::runStep() {
 
     if (currentRobotIndex >= robots.size()) currentRobotIndex = 0;
 
+    // Capture current battlefield state to string
+    stringstream battlefieldState;
+    streambuf* oldCoutBuffer = cout.rdbuf();
+    cout.rdbuf(battlefieldState.rdbuf());
+    display(); // This now outputs to our stringstream
+    cout.rdbuf(oldCoutBuffer); // Restore cout
+
+    // Log using existing logger
+    if (logger) {
+        logger->log(battlefieldState.str());
+    }
     Robot* currentRobotPtr = robots[currentRobotIndex].get();
 
     ThinkingRobot* thinker = dynamic_cast<ThinkingRobot*>(currentRobotPtr);
@@ -530,6 +887,7 @@ bool Battlefield::runStep() {
     }
 
     display();
+    if (robots.size() <= 1) return false;
 
     return true;
 }
@@ -547,7 +905,7 @@ void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
             }
 
         int chance = rand()% 100;
-        if (chance < 100){
+        if (chance < 70){
             cout << "Target hit! " << (*it)->getName() << " !\n";
             if (logger) logger->log("Target hit! " + (*it)->getName() + " !");
 
@@ -587,6 +945,7 @@ void Battlefield::checkAndHitRobot(int x, int y, Robot* shooter) {
             if (target->getLives() <= 0) {
                 logger->log(target->getName() + " was destroyed by " + shooter->getName());
                 robots.erase(it);
+                return;
             }
 
 
@@ -660,32 +1019,31 @@ int main() {
         return 1;
     }
 
-
-
     battlefield.display();
 
     int maxSteps = battlefield.getSteps();
     for (int step = 0; step < battlefield.getSteps(); ++step) {
-        logger.log("--- Step " + to_string(step + 1) + " ---");
-
-        // Run one robot's turn
-        if (!battlefield.runStep()) {
-            // This happens when robots.size() <= 1
-            logger.log("Simulation ended early only one robot left in the battlefield");
-            cout << "Simulation ended early robot above is the last one standing\n";
-            cout << "Simulation stopped at Step : " << step + 1 << endl;
-            break;
-        }
-
-        // EXTRA CHECK: if runStep() returned true but there's only one robot this one is due to a bug oawhdowahdoa
+         // EXTRA CHECK: if runStep() returned true but there's only one robot this one is due to a bug oawhdowahdoa
         if (battlefield.getRobots().size() <= 1) {
             logger.log("Simulation ended early only one robot left in the battlefield");
             cout << "Simulation ended early robot above is the last one standing\n";
             cout << "Simulation stopped at Step : " << step + 1 << endl;
+            
             break;
         }
 
-        Sleep(100);
+        logger.log("--- Step " + to_string(step + 1) + " ---");
+
+        if (!battlefield.runStep()) {
+            logger.log("Simulation ended early only one robot left in the battlefield");
+            cout << "Simulation ended early robot above is the last one standing\n";
+            cout << "Simulation stopped at Step : " << step + 1 << endl;
+            break;
+        }
+
+
+
+        Sleep(500);
     }
 
 

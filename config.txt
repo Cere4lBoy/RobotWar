@@ -1,6 +1,6 @@
 M by N : 8 8
 steps: 100
-GenericRobot Thaqif random random
+KamikazeBot Thaqif random random
 GenericRobot Rara 5 5
-GenericRobot Ieman random random
-GenericRobot Marcuz 3 3
+MineLayerBot Ieman random random
+CloneBot Marcuz 3 3
